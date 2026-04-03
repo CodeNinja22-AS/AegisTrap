@@ -1,0 +1,17 @@
+# Logs
+node_modules/
+dist/
+venv/
+.venv/
+__pycache__/
+
+# Environment Variables
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Editor files
+.vscode/
+.idea/
+.DS_Store
