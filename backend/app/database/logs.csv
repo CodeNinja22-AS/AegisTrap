@@ -1,0 +1,771 @@
+2026-03-28 16:11:48.769859,,normal,Login failed
+2026-03-28 16:22:38.281190,,normal,Login failed
+2026-03-28 16:24:39.267420,,normal,Login failed
+2026-03-28 16:25:53.335382,admin,bruteforce,Too many attempts...
+2026-03-28 17:21:41.061408,,bruteforce,Too many attempts...
+2026-03-28 17:23:41.067710,,bruteforce,Too many attempts...
+2026-03-28 17:27:29.640710,admin' OR 1=1,sqli,Fake DB access granted
+2026-03-28 17:28:04.707874,admin123,bruteforce,Too many attempts...
+2026-03-28 17:28:33.527273,hello,normal,Login failed
+2026-03-28 17:31:33.456300,admin' OR 1=1,sqli,"{'data': [{'username': 'admin', 'password': '1234'}, {'username': 'user', 'password': 'abcd'}]}"
+2026-03-28 17:32:01.476647,admin123,bruteforce,Too many attempts... slowing down
+2026-03-28 17:32:51.754880,whoami,suspicious,Command logged. Monitoring activity...
+2026-03-29T11:30:52.326994,1' OR '1'='1,sqli,"{'data': [{'username': 'admin', 'password': '1234'}, {'username': 'user', 'password': 'abcd'}]}"
+2026-03-29T11:31:28.247071,1' OR '1'='1,sqli,"{'data': [{'username': 'admin', 'password': '1234'}, {'username': 'user', 'password': 'abcd'}]}"
+2026-03-29T11:34:44.538847,1' OR '1'='1,sqli,"{'data': [{'username': 'admin', 'password': '1234'}, {'username': 'user', 'password': 'abcd'}]}"
+2026-03-29T11:35:10.344252,<script>alert('XSS')</script>,bruteforce,Too many attempts... slowing down
+2026-03-29T12:05:09.881502,"admin' OR 1=1
+<script>alert(1)</script>
+password123 brute force attempt",bruteforce,Too many attempts... slowing down2026-04-02 14:55:09.546923,1' OR '1'='1,sqli,"Starting query execution...
+Query: SELECT * FROM users WHERE username = 'admin' OR '1'='1'
++----+----------+------------+---------------------+-----------------+--------+
+| id | username | password   | email               | last_login      | active |
++----+----------+------------+---------------------+-----------------+--------+
+|  1 | admin    | 2a3b4c5d   | admin@example.com   | 2023-10-01 12:00 |      1 |
+|  1 | admin    | 2a3b4c5d   | admin@example.com   | 2023-10-01 12:10 |      1 |
+|  1 | admin    | 2a3b4c5d   | admin@example.com   | 2023-10-01 12:20 |      1 |
++----+----------+------------+---------------------+-----------------+--------+
+Error: Warning: mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given (SQL: SELECT * FROM users WHERE username = 'admin' OR '1'='1')
+Processing...
++----+----------+------------+---------------------+-----------------+--------+
+| id | username | password   | email               | last_login      | active |
++----+----------+------------+---------------------+-----------------+--------+
+|  1 | admin    | 2a3b4c5d   | admin@example.com   | 2023-10-01 12:00 |      1 |
+|  1 | admin    | 2a3b4c5d   | admin@example.com   | 2023-10-01 12:10 |"
+2026-04-02 14:55:22.973491,1' OR '1'='1,sqli,"Warning: mysql_fetch_assoc() expects parameter 1 to be resource, bool given
+Query: SELECT * FROM users WHERE username = '1' OR '1'='1' LIMIT 1
+Processing...
++----+----------+----------+---------------+
+| id | username | password | email         |
++----+----------+----------+---------------+
+|  1 | admin    | ******** | admin@example |
++----+----------+----------+---------------+
+
+Warning: Array to string conversion in /var/www/html/login.php on line 25
+Processing...
+Fetching more data...
++----+----------+----------+---------------+
+|  2 | user     | ******** | user@example  |
++----+----------+----------+---------------+
+
+Warning: mysql_fetch_assoc() expects parameter 1 to be resource, bool given
+Query: SHOW TABLES FROM mydatabase
+Processing...
++------------------+
+| Tables_in_mydatabase |
++------------------+
+| users            |
+| sessions         |
+| settings         |
++------------------+
+
+Warning: mysql_fetch_assoc() expects parameter 1 to be resource, bool given
+Query: SELECT * FROM sessions WHERE user_id = 1
+Processing...
++----+----------+---------------------+-----------+
+| id | user_id  | session_key         | expiration |
++----+----------+---------------------+-----------+
+| 10 | 1        | 9876543210abc       | 1629384720 |
++----+----------+---------------------+-----------+
+
+Warning: Array to string conversion in /var/www/html/admin.php on line 30
+Processing...
+Fetching system logs...
++---------------------+------------------+---------------------+------------------------------------------------------------+
+| timestamp           | level            | source              | message                                                    |
++---------------------+------------------+---------------------+------------------------------------------------------------+
+| 2023-06-15 15:34:12"
+2026-04-02 21:50:39.720680,eyJhbGciOiJIUzI1Ni...,command_injection,"cat: /etc/passwd: No such file or directory
+ls: cannot access /etc/secret: Permission denied
+ls /var/log/
+    auth.log permissions denied
+    boot.log truncated
+    user.log permissions denied
+ls /home/
+    account1: Directory permissions error
+    account2: Listing directory...
+            descovery_2023.txt
+            config.txt
+            scripts/
+ls: cannot open directory /scripts: Permission denied
+echo ""Trying to find more information...""
+tail -n 100 /var/log/auth.log
+    Nov 1 08:56:47 server sshd[4812]: Failed password for root from 192.168.1.202 port 54321 ssh2
+    Nov 1 08:56:52 server sshd[4813]: Failed password for root from 192.168.1.202 port 54322 ssh2
+    Nov 1 08:57:02 server sshd[4814]: Failed password for root from 192.168.1.202 port 54323 ssh2
+    Nov 1 08:57:12 server sshd[4815]: Failed password for root from 192.168.1.202 port 54324 ssh2
+    Nov 1 08:57:22 server sshd[4816]: Failed password for root from 192.168.1.202 port 54325 ssh2
+    Nov 1 08:57:32 server sshd[4817]: Failed password for root from 192.168.1.202 port 54326 ssh2
+    Nov 1 08:57:42 server sshd[4818]: Failed password for root from 192.168.1.202 port 54327 ssh2
+    Nov 1 08:57:52 server sshd[4819]: Failed password for root from"
+2026-04-02 21:51:00.422961,eyJhbGciOiJIUzI1Ni...,command_injection,"/bin/bash: warning: command substitution: ignored null character
+Processing...
+
+mysql -u root -pPASSWORD123 -h localhost < /tmp/sql_dump.sql
+ERROR 1045 (28000) at line 1: Access denied for user 'root'@'localhost' (using password: YES)
+
+/bin/ls -l /var/log/
+total 0
+
+/bin/date
+date: cannot stat `': No such file or directory
+
+/bin/cat /etc/issue
+CentOS Linux release 7.9.2009 (Core)
+
+/bin/whoami
+whoami: cannot open '/dev/tty': No such device or directory
+
+/bin/netstat -tuln
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      
+tcp6       0      0 :::22                   :::*                    LISTEN      
+udp        0      0 0.0.0.0:68              0.0.0.0:*                    
+udp6       0      0 :::5353                 :::*                   
+
+/bin/ps aux
+PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND
+1 root      20   0     2408    836    716 R 20.0  0.0   0:00.94 init
+2 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kthreadd
+3 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H
+4 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H-khelper
+5 root      20   0       0      0      0 S  0.
+
+[WARNING] Buffer overflow in libmysql.so detected, truncating response."
+2026-04-02 21:52:16.642067,1' OR '1'='1,sqli,"SELECT * FROM users WHERE id = '1' OR '1'='1' LIMIT 1; 
++----+----------+----------+------------+---------------------+-----+
+| id | username | password | email      | registration_date   | age |
++----+----------+----------+------------+---------------------+-----+
+| 1  | admin    | *hash*   | admin@attacker.com | 2023-03-01 09:00:00 | 30  |
+(1 row affected)
+Processing...
+SELECT * FROM admin;
++----+----------+----------+----------------+------------------+------------+-----------+
+| id | name     | password | role           | created_at        | updated_at | is_active |
++----+----------+----------+----------------+------------------+------------+-----------+
+| 1  | admin    | *hash*   | superadmin     | 2023-03-01 09:00:00 | 2023-03-01 09:00:00 | 1         |
+(1 row affected)
+MySQL server has encountered a hardware error: [Errno 5] Input/output error
+Access denied; you need (at least one of) the PROCESS privilege(s) for this operation. Debug message: mysqlnd_f anchandler: unable to fetch result
+Processing...
+WARNING: php_network_getaddresses: getaddrinfo failed: Name or service not known
+(2 rows affected)
+SELECT * FROM config WHERE id = '1' OR '1'='1';
++----+---------------------+--------+---------+
+| id | setting             | value  | section |
++----+---------------------+--------+---------+
+| 1  | database_connection | localhost | db_info |
+| 2  | smtp_server         | smtp.example.com | email |
+(2 rows affected)
+Processing...
+SELECT * FROM logs LIMIT 10;
++----+---------------------+---------------------+---------------------+---------------------+----------+-----------------------------+
+| id | user_id             | action              | timestamp           | ip_address          | success  | notes                       |
++----+---------------------+---------------------+---------------------+---------------------+----------+-----------------------------+
+| 1  | 1                   | login               | 2023-03-02 10"
+2026-04-02 22:10:19.969313,<script>alert('XSS')</script>,xss,"
+Processing query... (ETA 2.4s)
+Processing... 
+
+SELECT * FROM users WHERE id = 1; -- 
+
+------------------------------------------------------------------------
+-- Truncated Query Log
+-- 123.123.123.123 - comp defeated user
+------------------------------------------------------------------------
+
+[, ]<script>alert('XSS');</script>  # Warning: Possible Cross-Site Scripting Detected 
+
+------------------------------------------------------------------------
+-- DOM Manipulation Attempt
+-- 123.123.123.123 - comp defeated user
+------------------------------------------------------------------------
+
+<iframe src=""http://attackerip/test.html""></iframe> -- Warning: Suspicious Embed Tag Detected
+
+------------------------------------------------------------------------
+-- Cookie Leakage Suggestion
+------------------------------------------------------------------------
+
+User Cookie: user_session=eyJhbGciOi... -- Truncated at 100 chars 
+
+------------------------------------------------------------------------
+-- File System Search
+-- /var/www/html/ - comp defeated user
+------------------------------------------------------------------------
+
+[AccessDeniedException]: Permission denied: pwd
+
+------------------------------------------------------------------------
+-- API Log Entry
+-- comp defeated user
+------------------------------------------------------------------------
+
+2023-09-15 10:23:45 - GET /admin/users - 403 Forbidden
+
+------------------------------------------------------------------------
+-- Database Connection Attempt
+-- comp defeated user
+------------------------------------------------------------------------
+
+Connection established... -- [Error: Connection timed out]
+
+------------------------------------------------------------------------
+-- System Configuration File Attempt
+-- /etc/nginx/nginx.conf - comp defeated user
+------------------------------------------------------------------------
+
+[ErrorReadingConfig]: Unable to open file: Permission denied
+
+------------------------------------------------------------------------
+-- Terminal Output
+-- comp defeated user
+------------------------------------------------------------------------
+
+$ ls -l
+total 12
+dr-x------ 2 user user 4096 Sep 15 10:23 ./  
+dr-x------ 5 user user 4096 Sep 15 10:23 ../  
+-rw------- 1 user user  224 Sep 15 10:23 .bash_history  
+
+------------------------------------------------------------------------
+-- Database Schema Dumper
+-- comp defeated user
+------------------------------------------------------------------------
+
+-- Dumping structure for database 'testdb'
+-- Table structure for table 'users'
+-- CREATE TABLE `users` (
+--   `id` int(11) NOT NULL AUTO_INCREMENT,
+--   `username` varchar(255) DEFAULT NULL,
+--   `password` varchar(255) DEFAULT NULL,
+--   `email` varchar(255) DEFAULT NULL,
+--   PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT"
+2026-04-02 22:11:52.807004,1' OR '1'='1,sqli,"Processing...
+Warning: mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, bool given in /var/www/html/includes/db.php on line 42
+
+Query: SELECT * FROM users WHERE id = 1' OR '1'='1 
+Output Truncated: ID: 1, Username: admin, Password: hash123, Email: admin@site.com
+
+Warning: User data output truncated for security reasons. Please try another query.
+
+Processing...
+Query: SELECT * FROM server_config 
+Warning: mysql_fetch_array() expects parameter 1 to be resource, null given in /var/www/html/config.php on line 34
+
+Output Truncated: Server Name: mySite123, DB Host: localhost, DB Name: myDB1
+
+Warning: Config data output truncated for security reasons. Please try another query.
+
+Processing...
+Query: SELECT * FROM file_paths 
+Output Truncated: File Path: /var/www/html/files/
+
+Warning: File path data output truncated for security reasons. Please try another query.
+
+Accessing /var/www/html/files/...
+File List: index.php, config.php, db.php, images/
+
+Warning: Directory access limited. Please provide a valid file name.
+
+Processing...
+Query: SHOW TABLES 
+Tables_in_myDB1: users, server_config, file_paths, logs, backup_files
+
+Warning: Table list output truncated. Please specify a table to access.
+Access Denied, try another table."
+2026-04-02 22:13:06.038927,admin123,command_injection,"user@hackers-machine:~$ whoami
+root
+user@hackers-machine:~$ ls /root
+.ssh  backups  etc  home  lib64  mail  meetings  old_files  opt  proc  root  run  sbin  srv  tmp  var
+
+Processing...
+user@hackers-machine:~$ cat /root/.ssh/authorized_keys
+Warning: Connection lost: Force closed by remote host
+Received disconnect from 192.168.1.100 port 22:2: Too many authentication failures for root
+Connection closed by 192.168.1.100 port 22
+
+user@hackers-machine:~$ cat /etc/passwd | grep root
+root:x:0:0:root:/root:/bin/bash
+user@hackers-machine:~$ cat /etc/shadow | grep root
+root:!:18750:0:99999:7:::
+user@hackers-machine:~$ ls /etc/ | grep config
+apport                 aws         dhclient.conf  dpkg       group      localisation    localtime  passenger        release     sqlite3     udev
+auth                   cron        gdm          hostname   hosts      logrotate.conf  mtab       prison.conf      resolv.conf  vi           update-motd
+autofs                 cups        gshadow       init       hosts-ed   machine-id      nsswitch.conf    sm   security             xscreensaver
+authkeys               firewalld   groupmap     interfaces hosts_perc   mods-available  pam.d       ssl
+user@hackers-machine:~$ cat /etc/passwd | grep ssh
+sshd:x:101:65534::/var/empty/sshd:/usr/sbin/nologin
+user@hackers-machine:~$ cat /etc/ssh/sshd_config
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+LogLevel INFO
+#LoginGraceTime 2m
+PermitRootLogin no
+#StrictModes yes
+#MaxAuthTries 6
+#PermitEmptyPasswords no
+#RSAAuthentication yes
+#PubkeyAuthentication yes
+PermitRootLogin prohibit-password
+user@hackers-machine:~$ ls /var/log/
+alternatives
+
+[WARNING] Buffer overflow in libmysql.so detected, truncating response."
+2026-04-02 22:14:53.624817,<script>alert('XSS')</script>,xss,"
+[WARNING] Buffer overflow in libmysql.so detected, truncating response.
+Processing... 
+
+ERROR: Unhandled exception: unable to parse query.  
+Retrying last operation...
+
+TABLE disclosing_table SELECT * FROM admin_data WHERE username = 'admin123' LIMIT 1;
+
+--Partial output--
++----+----------------+-----------------+---------------------------+
+| id | username       | password        | email                     |
++----+----------------+-----------------+---------------------------+
+| 1  | admin123       | 2a86e0a483d704  | admin123@example.com     |
++----+----------------+-----------------+---------------------------+
+
+DOM manipulation detected. Truncating response.
+
+DELAY: 3 seconds
+
+---SCRIPT EXECUTION---
+<script>alert('XSS')</script>http://localhost:8080/protected
+
+WARNING: Potential XSS attempt. Session cookie leaked.
+
+DELAY: 2 seconds
+
+Attempt to leak cookies:
+Local storage: { 'session': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY1OTYyMjM2M30.P1CfNf4e-5e5z4N8w6e5f4e5f4e5f4e5f4e5f4e5f4e5f4e5f4e5f4e5f4e5f4e' }
+
+DOM manipulation: http://localhost:8080/ disclosing_table
+
+--Partial output--
++----+----------------+----------+-----------------------------+
+| id | username       | access   | last_login                  |
++----+----------------+----------+-----------------------------+
+| 1  | admin123       | admin    | 2023-10-08T14:23:45.123456Z |
+| 2  | user2          | user     | 2023-09-28T18:15:30.789123Z |
++----+----------------+----------+-----------------------------+
+
+DOM manipulation detected. Truncating response.
+
+DELAY: 1 second
+
+Access denied, try another table."
+2026-04-02 22:17:13.527379,eyJhbGciOiJIUzI1Ni...,command_injection,"Login attempt failed: user='admin' status=403
+
+Processing...
+cat /etc/passwd
+cat: /etc/passwd: Permission denied
+
+cd /var/log
+ls
+messages trunc_output.log lastlog wtmp
+
+grep -i admin trunc_output.log
+grep: trunc_output.log: Permission denied
+
+Processing...
+ls -a /home
+. ..
+root admin temp
+
+cd /home/admin
+ls
+Documents downloads code
+
+cat code/myfile.txt
+cat: code/myfile.txt: Permission denied
+
+Processing...
+ls -al /proc
+total 0
+-?????? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 
+-?????? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 
+-?????? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 
+
+cd /root
+ls
+.ssh backup config
+
+cat .ssh/authorized_keys
+cat: .ssh/authorized_keys: Permission denied
+
+Processing...
+ls -la /etc/mysql
+total 8
+drwxr-xr-x 2 mysql mysql 4096 Mar  7 14:00 .
+drwxr-xr-x 5 root  root  4096 Mar  7 14:00 ..
+-rw------- 1 mysql mysql 1860 Mar  7 14:00 my.cnf
+
+cd /etc/mysql
+cat my.cnf
+cat: my.cnf: Permission denied
+
+Processing...
+ls -l /etc/nginx
+total 0
+-?????? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? 
+
+cd /etc/nginx
+ls
+conf.d fastcgi_params koi-utf nginx.conf scgi_params uwsgi_params
+
+cat conf.d/default.conf
+cat: conf.d/default.conf: Permission denied
+
+Processing...
+ls -l /var/www
+total 4
+drwxr-xr-x 3 root root 4096 Mar  7 14:00 html
+drwxr-xr-x 2 root root 4096 Mar  7 14:00 phpmyadmin
+
+cd /var/www/html
+ls
+index.html
+
+cat index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to"
+2026-04-02 22:20:00.423197,/api/login spam,suspicious,"Warning: Potential SQL Injection Detected
+Processing...
+
+SELECT * FROM users WHERE username = 'admin' OR '1'='1' 
+
+Query Execution Failed: Error in query (1064) near ''1'='1'' at line 1
+Truncated Data: output truncated due to instability
+
+Trying to access /api/login... 
+
+Processing...
+HTTP/1.1 500 Internal Server Error
+Content-Type: text/html; charset=UTF-8
+Connection: close
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Internal Server Error</title>
+</head>
+<body>
+<h1>500 - Internal Server Error</h1>
+<p>Database connection failure</p>
+</body>
+</html>
+
+-- Attempted to access /etc/passwd --
+Access Denied, try another table
+
+-- Attempted to execute ls /var/log --
+ls: cannot access '/var/log/*': Permission denied
+
+-- Attempted to execute cat /etc/shadow --
+cat: /etc/shadow: Permission denied
+
+Processing...
+
+SELECT * FROM messages WHERE id = 1
+
+Query Execution Failed: Error in query (1064) near 'messages' at line 1
+Access Denied: unable to access table 'messages'
+
+-- Attempted to access /application/data/config.php --
+cat: /application/data/config.php: Permission denied
+
+Processing...
+
+-- Attempted to execute tail -f /var/log/apache2/access.log --
+cat: /var/log/apache2/access.log: Permission denied
+
+Processing...
+
+HTTP/1.1 500 Internal Server Error
+Content-Type: text/html; charset=UTF-8
+Connection: close
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Internal Server Error</title>
+</head>
+<body>
+<h1>500 - Internal Server Error</h1>
+<p>Log file access failure</p>
+</body>
+</html>
+
+-- Attempted to access /etc/mysql/my.cnf --
+cat: /etc/mysql/my.cnf: Permission denied
+
+Processing...
+
+Query Execution Failed: Error in query (1142) near 'FROM tables_ininformation_schema' at line 1
+Access Denied: unable to access database information
+
+-- Attempted to execute sudo ls / --
+sudo: effective uid is not 0, is /usr/bin/sudo not installed setuid root?
+
+Processing...
+
+-- Attempted to access /application/data/users.json --
+cat: /application/data/users"
+2026-04-02 22:33:35.584541,1' OR '1'='1,sqli,"Processing... 
+
+SELECT u.username, u.password FROM users u WHERE u.username = '1' OR '1'='1' LIMIT 10;
+Query OK, 9 rows in set (0.02 sec)
+
++----------+----------+
+| username | password |
++----------+----------+
+| user1    | pass1    |
+| user2    | pass2    |
+| user3    | pass3    |
+| user4    | pass4    |
+| user5    | pass5    |
+| user6    | pass6    |
+| user7    | pass7    |
+| user8    | pass8    |
+| user9    | pass9    |
++----------+----------+
+
+Warning: Truncated incorrect INTEGER value: 'user1'
+
+---- Dumping table users ----
+
+Creating table dump...
+Table dump partially completed due to database instability.
+
+Access denied for user 'admin'@'localhost' (using password: YES)
+
+Fetching more system logs...
+Logs truncated: connection lost
+
+Fetching server version information...
+Server version: 5.7.30-0ubuntu0.18.04.1 (Ubuntu)
+
+---- Attempting to access /etc/hosts ----
+
+File contents truncated: unable to read beyond EOF
+
+Trying to get more system files...
+Output truncated, retrying..."
+2026-04-02 22:37:21.855118,Click here to reset your compromised password,suspicious,"Querying database... 
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------+
+| user_id                                                         | password_hash                                                                                                                                         |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------+
+| 123456                                                         | $2y$10$eBM.N42.P3gD7xUmgTFAy.sin8BM.N42.P3gD7xUmgTFAy.s                                                                                             |
+| 123456                                                         | $2y$10$eBM.N42.P3gD7xUmgTFAy.sin8BM.N42.P3gD7xUmgTFAy.                                                                                                 |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------+
+Warning: mysql_num_rows() expects parameter 1 to be resource, boolean given (SQL: SELECT `user_id`, `password_hash` FROM `users` WHERE `password_hash` = '$2y$10$eBM.N42.P3gD7xUmgTFAy.sin8BM.N42.P3gD7xUmgTFAy.' LIMIT 1)
+Processed 100 records, 1 failed.
+Access denied for user 'attacker'@'localhost' (using password: YES)
+
+Directory listing of /var/www/html:
+drwxr-xr-x 3 www-data www-data 4096 Sep 11 13:00 .
+drwxr-xr-x 5 root     root     4096 Sep 10 14:00 ..
+-rw-r--r-- 1 www-data www-data  414 Sep 11 13:00 index.php
+-rw-r--r-- 1 www-data www-data  178 Sep 11 13:00 reset_password.php
+drwxr-xr-x 2 www-data www-data 4096 Sep 11 13:00 uploads
+-rw------- 1 www-data www-data  358 Sep 11 13:00 .htaccess
+
+API logs (last 10 requests):
+2023-09-11T13:00:00 - [ERROR] : Request from unauthorized IP, potential CSRF attack
+2023-09-11T13:01:00 -"
+2026-04-02 22:38:17.175415,whoami; ping -c 4 127.0.0.1,command_injection,"whoami; ping -c 4 127.0.0.1
+Processing... root
+output truncated due to system instability
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.032 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=2 ttl=64 time=0.051 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=3 ttl=64 time=0.045 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=4 ttl=64 time=0.049 ms
+^C
+--- 127.0.0.1 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3026ms
+rtt min/avg/max/mdev = 0.032/0.043/0.051/0.011 ms
+
+ls /etc/
+access denied, try another directory
+ls /var/log/
+messages           wtmp
+auth.log           btmp
+faillog            boot.log
+kern.log           lastlog
+daemon.log         mrtg.log
+cron.log          syslog
+apt                xferlog
+
+cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+whoami: command not found
+
+cat /etc/shadow
+root:*:18178:0:99999:7:::
+daemon:*:18178:0:99999:7:::
+bin:*:18178:0:99999:7:::
+sys:*:18178:0:99999:7:::
+whoami: command not found
+
+[DEBUG] packet loss at 0x4f22... retrying dump..."
+2026-04-02 22:39:38.382782,1' OR '1'='1,sqli,"
+[SYSTEM] Warning: Connection instability detected...
+Server starting... 
+[Wed Oct 11 14:32:05 2023] [error] [client 127.0.0.1] PHP Warning:  mysql_query(): Access denied for user 'attacker'@'localhost' (using password: NO) in /var/www/html/core/process.php on line 25
+
+SQL Query Execution: 
+SELECT * FROM users WHERE username = 'attacker' OR '1'='1' LIMIT 1
+
+[Wed Oct 11 14:32:05 2023] [error] [client 127.0.0.1] Warning: mysql_num_rows() expects parameter 1 to be resource, boolean given in /var/www/html/core/process.php on line 27
+
+Processed rows: 0
+Processing... Output truncated, try another table.
+
+System attempting to access: config.db
+[Wed Oct 11 14:32:06 2023] [error] [client 127.0.0.1] PHP Warning:  mysql_pconnect(): Access denied for user 'attacker'@'localhost' (using password: NO) in /var/www/html/core/config.php on line 10
+
+System attempting to access: users.db
+Processing... System partially broken. Please retry.
+
+Database access attempt: 
+[Wed Oct 11 14:32:07 2023] [error] [client 127.0.0.1] PHP Warning:  mysql_query(): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2) in /var/www/html/core/query.php on line 30
+
+Partial table dump:
++----+----------+--------+
+| id | username | status |
++----+----------+--------+
+|  1 | attacker | active |
+|  2 |         |        |
+|  3 |         |        |
+|  4 |         |        |
++----+----------+--------+
+
+[Wed Oct 11 14:32:08 2023] [error] [client 127.0.0.1] Warning: mysql_fetch_assoc(): supplied argument is not a valid MySQL result resource in"
+2026-04-02 22:40:31.647401,1' OR '1'='1,sqli,"
+[DEBUG] packet loss at 0x4f22... retrying dump...
+SELECT user, password FROM users WHERE id = 1' OR '1'='1
++----------+----------+
+| user     | password |
++----------+----------+
+| admin    | ******** |
++----------+----------+
+Query execution done.
+Processing... Accessing /etc/passwd
+
+cat: /etc/passwd: Permission denied
+cat: /etc/passwd: Permission denied
+
+drwxr-xr-x  20 root root  4096 Mar  8 14:39 /var
+drwxr-xr-x  49 root root  4096 Mar  8 14:41 /usr
+drwxr-xr-x 102 root root  4096 Mar  8 14:42 /lib
+-rw-r--r--   1 root root  5072 Mar  8 14:42 /lib/ld-linux.so.2
+drwxr-xr-x  12 root root  4096 Mar  8 14:42 /bin
+-rwxr-xr-x   1 root root    72 Mar  8 14:42 /bin/ls
+drwxr-xr-x   2 root root  4096 Mar  8 14:42 /sbin
+drwxr-xr-x   2 root root 12288 Mar  8 14:42 /proc
+drwxr-xr-x   5 root root  4096 Mar  8 14:42 /root
+drwxr-xr-x  56 root root  4096 Mar  8 14:42 /home
+-rw-rw-r--   1 root root     5 Mar  8 14:42 /etc/group
+-rw-r--r--   1 root root     4 Mar  8 14:42 /etc/inputrc
+drwxr-xr-x  13 root root  4096 Mar  8 14:42 /etc
+drwxr-xr-x   2 root root  4096 Mar  8"
+2026-04-02 22:40:59.543331,1' OR '1'='1,sqli,"SELECT * FROM users WHERE id = 1; 
++----+----------------+-----------------+---------------------+----------------+--------------+
+| id | username       | password        | email               | last_login     | is_admin     |
++----+----------------+-----------------+---------------------+----------------+--------------+
+| 1  | admin          | 2a519a45...     | admin@example.com   | 2023-10-10 09:45:02 | 1            |
++----+----------------+-----------------+---------------------+----------------+--------------+
+Query OK, 1 row affected (0.23 sec)
+
+bash: ping: command not found
+php: open_basedir restriction in effect. File(/var/www/html/config.php) is not within the allowed path(s): (/tmp/:/proc/)
+
+Processing... 
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+Query OK, 0 rows affected (0.08 sec)
+
+Warning: mysqli::ping(): unable to connect to server (2002) in /var/www/html/library.php on line 45
+Access denied for user 'admin'@'localhost' (using password: YES)
+
+user@host:~$ ls -l
+total 4
+-rw-r--r-- 1 root root 0 Oct 10 10:00 config
+drwxr-xr-x 2 root root 4096 Oct 10 10:00 etc
+-rw-r--r-- 1 root root 0 Oct 10 10:00 index.php
+drwxr-xr-x 2 root root 4096 Oct 10 10:00 tmp
+
+user@host:~$ cat config 
+[database]
+host = localhost
+user = admin
+password = 2a519a45...
+table = users
+
+user@host:~$ whoami
+root
+who: output truncated
+
+user@host:~$ sudo ls -l /etc/crontab
+crontab: can't changedirs to /etc: Permission denied
+Processing... 
+
+user@host:~$ tail -n 10 /var/log/syslog"
+2026-04-03 03:40:50.517161,1' OR '1'='1,sqli,"
+[SYSTEM] Warning: Connection instability detected...
+Error occurred while processing query: '1'='1
+Query: SELECT * FROM users LIMIT 10
+
+---[ MySQL Query Execution ]---
+
+[Warning] Incorrect string value: '\xF0\x9F\x98\x80' for column 'profile_picture' at row 3
+-------------------------
+| id | username | email   |
+-------------------------
+| 1  | testuser| test@ex | 
+| 2  | hacker  | hack@ex | 
+| 3  | admin   | admin@  | 
+-------------------------
+Access truncated, try another table? 
+
+---[ File System Listing ]---
+
+ls: cannot access 'config.php': No such file or directory
+ls: cannot access 'database.php': No such file or directory
+ls: cannot access 'settings.php': No such file or directory
+ls: cannot access 'admin.php': No such file or directory
+ls: cannot access 'api_keys.php': No such file or directory
+drwxr-xr-x   2 root     root          4096 Mar  5 14:02 logs
+drwxr-xr-x   3 root     root          4096 Mar  5 14:02 uploads
+drwxr-xr-x   2 root     root          4096 Mar  5 14:02 tmp
+drwxr-xr-x   2 root     root          4096 Mar  5 14:02 include
+ls: cannot access 'readme.txt': No such file or directory
+
+---[ API Log ]---
+
+[2023-03-06 15:02:01] GET /api/v1/users/1 => Unauthorized
+[2023-03-06 15:02:02] GET /api/v1/users/2 => Unauthorized
+[2023-03-06 15:02:03] GET /api/v1/users/3 => Unauthorized
+[2023-03-06 15:02:04] GET /api/v1/users/4 => Unauthorized
+[2023-03-06 15:02:05] GET /api/v1/users/5 => Unauthorized"
