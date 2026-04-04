@@ -93,6 +93,9 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     # 🔹 Step 6: Decision Engine (IDS vs IPS)
     behavior = get_mode_behavior(mode)
     
+    print(f"[DEBUG] Processing Attack Type: {attack_type}")
+
+    
     if behavior["block"] and attack_type != "normal":
         # 🔥 IPS MODE: Return static block response
         ai_output = generate_block_response(data.input, attack_type)

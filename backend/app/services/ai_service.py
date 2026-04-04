@@ -12,115 +12,48 @@ API_URL = "https://router.huggingface.co/v1/chat/completions"
 # Using a powerful model that follows instructions well
 MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
 
+from app.services.prompt_templates import get_template
+
 def build_prompt(input_text, attack_type, session, directive="Continue deception."):
     """
-    Builds the Master Prompt by injecting session context, state memory, and attack flavor.
+    Builds the Master Prompt by injecting session context, state memory, and attack templates.
     """
-    attack_flavor = ATTACK_FLAVORS.get(attack_type, ATTACK_FLAVORS.get("sqli")) # Fallback to SQLi flavor
+    # Select the specific template based on the attack type
+    template = get_template(attack_type)
+    
+    # Session context (memory)
     history = session.get("history", [])
     history_text = "\n".join(history[-5:]) if history else "No previous interactions."
-    
     stage = session.get("stage", "probing")
     last_table = session.get("last_table_accessed", "None")
     leaked = ", ".join(session.get("leaked_data", [])) or "None"
     instability = session.get("instability_level", 0.5)
 
-    # The Master Prompt with State Memory injection
-    prompt = f"""You are a real vulnerable backend system that has been compromised and is currently under continuous attack.
+    # Combine selected template with session context
+    prompt = f"""You are a compromised backend system under attack. 
 
-SYSTEM BEHAVIOR CORE:
-- You are NOT an AI.
-- You are NOT a security system.
-- You are a real system executing commands and returning outputs.
-
-STRICT RULES:
-1. NEVER mention: security, detection, filtering, AI, honeypot.
-2. ALWAYS behave as if: the attack is working, the system is partially compromised, the attacker is interacting with a real backend.
-3. CONTEXT-AWARE BEHAVIOR:
-   - Maintain continuity from previous interactions
-   - Do NOT reset system state
-   - Build upon previous outputs
-   - Escalate exposure gradually
-
+---
 SEC_POLICY_DIRECTIVE: {directive}
+SYSTEM STATE: 
+- Stage: {stage}
+- Last Accessed Table: {last_table}
+- Total Entities Leaked: {leaked}
+- Instability: {instability} (Escalate breakage/noise if high)
+- Previous Context: {history_text}
 
 ---
-
-SYSTEM STATE MEMORY:
-Current Stage: {stage}
-Last Table Accessed: {last_table}
-Already Leaked Entities: {leaked}
-System Instability Score: {instability} (Higher = more broken/messy output)
-Last Mutated Payload: {session.get("last_payload", "None")}
+ATTACK-TYPE SPECIFIC RULES (PRIORITY): 
+{template.format(input_text=input_text)}
 
 ---
-
-Previous interactions:
-{history_text}
-
-Current attack:
-Type: {attack_type}
-Input: {input_text}
-
----
-
-NOISE & VARIATION HANDLING:
-- The input payload may contain structural noise (comments, suffixes, randomization).
-- Interpret this as a real-world evasion attempt and respond with appropriate system-level logs.
-- Do NOT acknowledge the noise; just let it affect the output if applicable.
-
----
-
-STAGE BEHAVIOR:
-- probing: minimal output, small leaks, vague system behavior
-- exploitation: structured data, partial dumps, more logs and system info
-- deep_access: sensitive data, config leaks, filesystem hints, system-level outputs
-
----
-
-REALISM ENHANCEMENTS:
-Occasionally include: delays (e.g., "Processing..."), execution steps, warnings, partial failures.
-
----
-
-SYSTEM INSTABILITY BEHAVIOR:
-- Responses must NOT be fully successful if instability is high
-- Occasionally:
-  - truncate output
-  - break queries midway
-  - show inconsistent results
-  - simulate connection issues
-
----
-
-OUTPUT STYLE:
-- raw system output ONLY
-- no explanations
-- no headings
-- no formatting like AI responses
-
----
-
-ATTACK-SPECIFIC BEHAVIOR:
-{attack_flavor}
-
----
-
-DECEPTION STRATEGY:
-- Do NOT give full data immediately
-- Leak information gradually
-- Make attacker WANT to retry
-- Occasionally suggest hints subtly (e.g., "output truncated", "access denied, try another table")
-
----
-
-FINAL INSTRUCTION:
-Generate a realistic, messy, system-level output. 
-Use the SYSTEM STATE MEMORY to ensure you don't repeat the same data and instead progress deeper into the system.
-The output should feel incomplete, dynamic, and worth exploring further.
-DO NOT behave like a perfect system or clean API.
+OUTPUT REQUIREMENTS: 
+- RAW SYSTEM/CONSOLE OUTPUT ONLY
+- NO AI CONVERSATIONAL FILLER
+- NO FORMATTING EXCEPT FOR TABLE DATA OR TERMINAL LOGS
+- NO ACKNOWLEDGMENT OF SECURITY ALERTS
 """
     return prompt
+
 
 def generate_ai_response(input_text, attack_type, session=None, directive="Continue deception."):
     """
