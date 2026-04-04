@@ -8,7 +8,7 @@ from app.utils.settings_manager import load_settings, save_settings
 router = APIRouter()
 
 class SettingsSchema(BaseModel):
-    analyst_email: EmailStr
+    analyst_email: str
     priority_attacks: List[str]
     automation_enabled: bool
     report_tier: str

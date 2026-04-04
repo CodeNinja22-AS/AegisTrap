@@ -1,9 +1,9 @@
 [
     {
-        "analyst_name": "",
-        "role": "Tier 3",
-        "shift": "09:00 - 17:00 (Day)",
-        "email": "parinitapiplewar@gmail.com",
+        "analyst_name": "Test",
+        "role": "Tier 1",
+        "shift": "Day",
+        "email": "",
         "priority_attacks": [],
         "activity_log": []
     }

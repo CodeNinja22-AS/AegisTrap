@@ -1,12 +1,12 @@
 {
-    "analyst_email": "parinitapiplewar@gmail.com",
+    "analyst_email": "",
     "priority_attacks": [],
     "automation_enabled": false,
-    "report_tier": "Tier 3",
-    "mode": "IPS",
+    "report_tier": "Tier 1",
+    "mode": "IDS",
     "ai_threshold": "balanced",
     "siem_enabled": false,
     "work_mode": "live",
-    "analyst_name": "",
-    "shift_time": "09:00 - 17:00 (Day)"
+    "analyst_name": "Test",
+    "shift_time": "Day"
 }
