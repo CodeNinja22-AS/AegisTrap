@@ -30,7 +30,8 @@ export default function Settings() {
 
   // Fetch from Backend on Mount
   useEffect(() => {
-    fetch("http://localhost:8000/settings")
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    fetch(`${BASE_URL}/settings`)
       .then(res => res.json())
       .then(data => {
         setAnalystEmail(data.analyst_email || "");
@@ -74,7 +75,8 @@ export default function Settings() {
       work_mode: updatedFields.workMode ?? workMode
     };
 
-    fetch("http://localhost:8000/settings", {
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    fetch(`${BASE_URL}/settings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(currentSettings)
@@ -90,7 +92,8 @@ export default function Settings() {
   };
 
   const handleExportReport = () => {
-    fetch("http://localhost:8000/analyst/activity")
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    fetch(`${BASE_URL}/analyst/activity`)
       .then(res => res.json())
       .then(data => {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });

@@ -10,7 +10,7 @@ from app.services.report_service import generate_report
 from app.services.email_service import send_email
 from app.utils.settings_manager import load_settings
 from app.utils.logger import log_attack
-from app.services.payload_service import generate_final_payload
+# from app.services.payload_service import generate_final_payload
 
 # 🔹 Task 2: Security Layer Services
 from app.services.mode_service import get_mode_behavior
@@ -67,10 +67,7 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     attack_type, confidence = predict_attack(data.input)
     
     # 🔥 NEW: Payload Mutation Engine
-    enhanced_payload = generate_final_payload(
-        user_input=data.input,
-        attack_type=attack_type
-    )
+    enhanced_payload = data.input # fallback since generate_final_payload is missing
     session["last_payload"] = enhanced_payload
     
     threshold = get_threshold_config(threshold_lvl)

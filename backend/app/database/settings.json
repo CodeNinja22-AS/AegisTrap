@@ -3,10 +3,10 @@
     "priority_attacks": [],
     "automation_enabled": false,
     "report_tier": "Tier 3",
-    "mode": "IDS",
+    "mode": "IPS",
     "ai_threshold": "balanced",
     "siem_enabled": false,
-    "work_mode": "demo",
+    "work_mode": "live",
     "analyst_name": "",
     "shift_time": "09:00 - 17:00 (Day)"
 }

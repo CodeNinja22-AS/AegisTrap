@@ -978,3 +978,6 @@ Filesystem access: /etc/passwd; -- Partial access denied
 +-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
 
 API log: GET"
+2026-04-04 14:12:04.337945,<details open ontoggle=alert(1)>,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:12:07.964746,<details open ontoggle=alert(1)>,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:12:38.710534,/api/v1/debug,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.

