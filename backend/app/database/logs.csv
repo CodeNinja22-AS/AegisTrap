@@ -808,3 +808,107 @@ password: [truncated data]
 --- 
 Current system instability score: 0.26
 Expected to increase in the next interaction."
+2026-04-04 10:46:19.603184,1' OR '1'='1,normal,"Error in query: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1'='1' LIMIT 0, 30'' at line 1
+Processing...
+Checking access...
+Truncated row data...
++----+----------+-----------+---------------------+
+| id | username | password  | last_login          |
++----+----------+-----------+---------------------+
+|  1 | (censored) | (hash)    | (censored)          |
+|  2 | (censored) | (hash)    | (censored)          |
++----+----------+-----------+---------------------+
+Access denied, try another table. Output truncated.
+Checking next system file...
+Processing...
++---------------------------+
+| Filesystem Path           |
++---------------------------+
+| /var/www/html/index.php   |
+| /var/log/apache2/access.log |
+| /etc/passwd               |
++---------------------------+
+Access to /etc/passwd denied.
+Access to /var/www/html/index.php granted.
+Processing...apache2 configuration contents...
++---------------------------------+
+| DirectoryIndex index.php        |
+| DocumentRoot /var/www/html      |
+| ServerAdmin admin@example.com   |
++---------------------------------+
+Access to /var/log/apache2/access.log granted.
++------------------------------------------------------------+
+| Log File Contents                                          |
++------------------------------------------------------------+
+| 127.0.0.1 - - [25/May/2023:12:34:56 -0400] ""GET /login HTTP/1.1"" 200 1234 |
+| 127.0.0.1 - - [25/May/2023:12:35:01 -0400] ""POST /login HTTP/1.1"" 200 1235 |
++------------------------------------------------------------+
+Connection timeout. Retry..."
+2026-04-04 10:46:47.851272,eyJhbGciOiJIUzI1Ni...,normal,"Starting interactive session...
+
+Processing... SQL query: SELECT * FROM users WHERE username = 'admin' OR '1'='1' LIMIT 1;
+Warning: mysql_execute(): Operation failed: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1'='1'' at line 1
+
+Starting API request: GET /api/v2/userinfo
+Response: {""userId"": ""5"", ""username"": ""user"", ""email"": ""user@compromised.com"", ""status"": ""active""}
+
+Accessing filesystem... Reading /etc/passwd
+Contents: root:x:0:0:root:/root:/bin/bash
+Warning: Partial read: data truncated
+
+Trying to execute: cat /etc/nginx/nginx.conf
+cat: /etc/nginx/nginx.conf: Permission denied
+
+Processing... SQL query: SELECT * FROM sessions WHERE user_id = '5' LIMIT 1;
+Output truncated, try another query
+
+Generating random unique identifier...
+ID generated: 456789ab-cdef-ghij-klmn-opqrstuvwx
+
+Trying to access config file... Reading /var/www/config.json
+Contents: {""apiKey"": ""1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg"", ""dbHost"": ""localhost"", ""dbUser"": ""root"", ""dbPass"": ""password123""}
+
+Warning: Operation failed: Filesystem access error
+
+Checking logs... Reading /var/log/nginx/access.log
+Contents: ...
+127.0.0.1 - - [14/Mar/2023:12:00:00 +0000] ""GET / HTTP/1.1"" 200 3482 ""-""
+127.0.0.1 - - [14/Mar/2023:12:01:00 +0000] ""POST /api/v2/userinfo HTTP/1.1"" 200 4567 ""-""
+127.0.0.1 - - [14/Mar/2023:12:02:00 +0000] ""GET /"
+2026-04-04 10:47:29.142929,1' OR '1'='1,normal,"SELECT * FROM users WHERE id = 1; Processing... Error: Lost connection to MySQL server at 'reading initial communication packet', system error: 1105
+
+--- API LOG ---
+Time: 2023-04-15 10:32:45
+Method: GET
+Path: /api/user/data
+Status: 500
+Error: Internal Server Error
+
+--- FILE SYSTEM RESPONSE ---
+/home/user/.config/credentials.json Processing... Error: Permission denied
+
+--- DATABASE QUERY ---
+Query: SELECT * FROM config WHERE name = 'database';
+Output truncated
+
+--- EXECUTION TRACE ---
+[2023-04-15 10:32:50] user@backend [ERROR] Warning: include(/etc/config.inc.php): failed to open stream: No such file or directory in /var/www/html/index.php on line 15
+[2023-04-15 10:32:50] user@backend [ERROR] Warning: include(): Failed opening '/etc/config.inc.php' for inclusion (include_path='.:/usr/local/lib/php') in /var/www/html/index.php on line 15
+
+--- SYSTEM LOG ---
+[2023-04-15 10:32:55] user@backend [INFO] Executing command: /usr/bin/mysql -u root -p
+[2023-04-15 10:32:55] user@backend [DEBUG] Password prompt encountered, inputting: [masked]
+[2023-04-15 10:32:56] user@backend [ERROR] Warning: mysql_real_connect(): [2002] Connection refused (trying to connect via TCP/IP)
+
+--- TERMINAL OUTPUT ---
+root@backend:~# ls /var/log/
+dmesg.log  faillog  messages  syslog
+root@backend:~# cat /var/log/messages
+Processing... Error: Connection closed by remote host
+
+--- FILE SYSTEM REQUEST ---
+Requesting /etc/shadow Processing... Error: Permission denied
+
+--- DATABASE DUMP ---
+Table: users
+Row: 1 | id: 1 | name: admin | password: 9236f1b96bb05d6daedfd7870b6"
