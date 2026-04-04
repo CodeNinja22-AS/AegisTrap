@@ -98,16 +98,47 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     if confidence < threshold and attack_type != "normal":
         attack_type = "normal" 
 
-    # 🔹 Forensics Override (Manual Logic for modern vectors)
+    # 🔹 Forensics Override (High-Sensitivity Safety Net)
     input_lower = data.input.lower()
     
-    if re.search(r"eyJ[a-zA-Z0-9_-]+\.eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+", data.input):
+    # 1. SQL Injection (Comprehensive Coverage)
+    sqli_patterns = [
+        r"(' OR '1'='1|' OR 1=1|' --|' #|' /\*)", # Logic bypass
+        r"(UNION\s+SELECT|SELECT.*FROM|INSERT\s+INTO|UPDATE.*SET|DELETE\s+FROM)", # DML
+        r"(SLEEP\(|BENCHMARK\(|WAITFOR\s+DELAY)", # Time-based
+        r"(HEX\(|UNHEX\(|CONCAT\(|GROUP_CONCAT\()", # Obfuscation
+        r"(CHAR\(|CHR\(|ASCII\(|ORD\()", # Encoding bypass
+        r"(INFORMATION_SCHEMA|MASTER\.\.|\.SYSTEM_)" # DB internal access
+    ]
+    if any(re.search(p, input_lower) for p in sqli_patterns):
+        attack_type = "sqli"
+    
+    # 2. XSS (Sensitive Attribute & Tag Detection)
+    elif re.search(r"(<script|onerror=|onload=|javascript:|alert\(|eval\(|document\.|<img.*src=|<iframe|<svg|onmouseover=)", input_lower):
+        attack_type = "xss"
+    
+    # 3. Path Traversal (Deep jumps & sensitive files)
+    elif re.search(r"(\.\./|\.\.\\|/etc/passwd|/etc/shadow|C:\\Windows|boot\.ini|/proc/|/var/log/)", input_lower):
+        attack_type = "path_traversal"
+    
+    # 4. Command Injection (Shell chaining & common binaries)
+    elif re.search(r"(;\s*(id|whoami|cat|ls|pwd|uname|netstat|nc|wget|curl)|&&\s*(id|whoami|cat)|\|\s*(id|whoami|cat)|`.*`)", input_lower):
+        attack_type = "command_injection"
+    
+    # 5. JWT & Session Tampering
+    elif re.search(r"(eyJ[a-zA-Z0-9_-]+\.eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+|session_id=|jwt=)", data.input):
         attack_type = "jwt_attack"
+        
+    # 6. API Abuse & Parameter Tampering
     elif re.search(r"(\"id\"|\"user_id\"|\"admin\"):(\strue|false|[0-9]+)", data.input, re.IGNORECASE) and "/api/" in data.input:
         attack_type = "api_abuse"
+        
+    # 7. CSRF (Hidden form submission)
     elif "<form" in input_lower and "action=" in input_lower and "csrf" not in input_lower:
         attack_type = "csrf"
-    elif re.search(r"\.(php|jsp|asp|exe|sh|py)$", input_lower):
+        
+    # 8. Malicious File Upload (Webshell extensions)
+    elif re.search(r"\.(php|jsp|asp|exe|sh|py|pl|cgi|asp|phtml)$", input_lower):
         attack_type = "file_upload_attack"
 
     # 🔹 Step 6: Decision Engine (IDS vs IPS)
