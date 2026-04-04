@@ -22,12 +22,16 @@ def get_logs(mode: str = None):
             docs = db.collection(col).limit(100).stream()
             for doc in docs:
                 data = doc.to_dict()
+                # Detection for structured risk telemetry
+                is_structured = "severity_level" in data
+                prediction = data.get("prediction", data.get("attack_type", "unknown"))
+                
                 # Frontend expects array: [timestamp, input, attack_type, response]
                 logs.append([
                     data.get("timestamp", ""),
-                    data.get("input", ""),
-                    data.get("prediction", data.get("attack_type", "")),
-                    data.get("response", "")
+                    data.get("input_payload", data.get("input", "")),
+                    prediction,
+                    data if is_structured else data.get("response", "")
                 ])
             # Reverse to match chronological order if needed, but UI usually wants newest top
             return logs

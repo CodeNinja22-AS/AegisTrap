@@ -16,4 +16,10 @@ __pycache__/
 .idea/
 .DS_Store
 
+# Firebase Keys & Secrets
 firebaseSdkKey.json
+backend/*.json
+*.json.bak
+!package.json
+!composer.json
+!tsconfig.json
