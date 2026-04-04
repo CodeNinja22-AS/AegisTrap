@@ -339,3 +339,78 @@ p {
   color: var(--text-main);
   padding: 0.5rem;
 }
+
+/* --- Responsive Media Queries --- */
+
+@media (max-width: 1024px) {
+  h1 { font-size: 2rem; }
+  .cyber-card { padding: 1.5rem !important; }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+  
+  .sidebar-container {
+    display: none !important; /* Simple hide for now, or could be a drawer */
+  }
+
+  .topbar-container {
+    padding: 0 1rem !important;
+  }
+
+  .topbar-container h1 {
+    font-size: 1.25rem !important;
+  }
+
+  .topbar-right {
+    gap: 1rem !important;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  h1 { font-size: 1.75rem; }
+  
+  input[type="text"] {
+    max-width: 100%;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .topbar-right span:not(.status-dot) {
+    display: none; /* Hide 'SYSTEM ACTIVE' text on very small screens */
+  }
+}
+
+/* --- Utility Classes --- */
+.flex-split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

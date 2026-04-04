@@ -15,9 +15,9 @@ export default function Layout({ children }) {
   }, []);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: 'var(--bg-dark)' }}>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: 'var(--bg-dark)', overflow: 'hidden' }}>
       {/* Sidebar Section */}
-      <div className="sidebar-container" style={{ width: '250px', borderRight: '1px solid var(--border-color)', padding: '2rem 0' }}>
+      <div className="sidebar-container" style={{ width: 'var(--sidebar-width, 250px)', borderRight: '1px solid var(--border-color)', padding: '2rem 0', transition: 'width 0.3s ease' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>
           <Link to="/" className={getLinkClass("/")} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', textDecoration: 'none', borderRadius: '8px', transition: 'all 0.2s' }}>
             <span style={{ fontWeight: '500' }}>Dashboard</span>

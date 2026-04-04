@@ -66,7 +66,7 @@ export default function Dashboard() {
       <h1 style={{ marginBottom: 0 }}>System Overview</h1>
       
       {/* Section 1: Top Metrics Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1.5rem' }}>
+      <div className="metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1.5rem' }}>
         
         <div className="cyber-card" style={{ borderTop: '3px solid var(--text-main)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>Total Attacks</div>
@@ -131,7 +131,7 @@ export default function Dashboard() {
       </div>
 
       {/* CSS Grid for Section 2 (Graph) & Section 3 (Feed) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
+      <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
         
         {/* Section 2: Center Graph Area */}
         <div className="cyber-card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
