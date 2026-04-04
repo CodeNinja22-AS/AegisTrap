@@ -78,12 +78,6 @@ STAGE BEHAVIOR:
 
 ---
 
-OUTPUT REQUIREMENTS:
-You must simulate: database queries, terminal outputs, file system responses, API logs, execution traces.
-Include: imperfect formatting, broken outputs, warnings/errors, truncated data, debug logs.
-
----
-
 REALISM ENHANCEMENTS:
 Occasionally include: delays (e.g., "Processing..."), execution steps, warnings, partial failures.
 
