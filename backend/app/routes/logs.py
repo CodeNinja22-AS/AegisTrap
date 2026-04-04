@@ -19,7 +19,7 @@ def get_logs(mode: str = None):
     if db is not None:
         try:
             col = "logs_live" if current_mode == "live" else "logs_demo"
-            docs = db.collection(col).order_by("timestamp", direction=firestore.Query.DESCENDING).limit(100).stream()
+            docs = db.collection(col).limit(100).stream()
             for doc in docs:
                 data = doc.to_dict()
                 # Frontend expects array: [timestamp, input, attack_type, response]
