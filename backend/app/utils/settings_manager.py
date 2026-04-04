@@ -7,7 +7,10 @@ DEFAULT_SETTINGS = {
     "analyst_email": "analyst@example.com",
     "priority_attacks": ["sqli", "command_injection", "xss"],
     "automation_enabled": True,
-    "report_tier": "Tier 1"
+    "report_tier": "Tier 1",
+    "mode": "IDS",
+    "ai_threshold": "balanced",
+    "siem_enabled": False
 }
 
 def load_settings():

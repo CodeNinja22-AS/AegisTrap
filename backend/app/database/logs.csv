@@ -769,3 +769,42 @@ ls: cannot access 'readme.txt': No such file or directory
 [2023-03-06 15:02:03] GET /api/v1/users/3 => Unauthorized
 [2023-03-06 15:02:04] GET /api/v1/users/4 => Unauthorized
 [2023-03-06 15:02:05] GET /api/v1/users/5 => Unauthorized"
+2026-04-04 10:38:28.920281,1' OR '1'='1,normal,"Processing... 
+
+SELECT username , password FROM users WHERE id = '1' OR '1'='1'
+
+--- Warning: MySQL server has encountered an issue. Connection may be unstable. ---
++----------------+----------+
+| username        | password |
++----------------+----------+
+| admin           |          |  [Execution failed: truncated data] 
++----------------+----------+
+
+mysql烫手山芋! 
+表数据溢出警告。尝试其他表名以获取更多见解。
+
+--- 
+System log:
+[Wed Oct 11 10:23:45 2023] [error] [client ::1] PHP Warning:  mysqli_real_connect(): (28000/1045): Access denied for user 'backupuser'@'localhost' (using password: YES) in /var/www/html/db_connect.php on line 12
+ 
+--- 
+API request log:
+[2023-10-11 10:23:46] [error] [client ::1] [API] Request to /admin/api/v1/users returned 500 Internal Server Error. Database connection failed. Attempt 1 of 3.
+[2023-10-11 10:23:47] [error] [client ::1] [API] Request to /admin/api/v1/users returned 500 Internal Server Error. Database connection failed. Attempt 2 of 3.
+[2023-10-11 10:23:48] [error] [client ::1] [API] Request to /admin/api/v1/users returned 500 Internal Server Error. Database connection failed. Attempt 3 of 3.
+
+--- 
+File system response:
+/var/www/html/users.txt
+- Access: -rw-r--r--
+- Size: 1.2 KB
+- Last Modified: 2023-10-11 10:23:00
+
+cat /var/www/html/users.txt
+Content: 
+username: 
+password: [truncated data]
+
+--- 
+Current system instability score: 0.26
+Expected to increase in the next interaction."

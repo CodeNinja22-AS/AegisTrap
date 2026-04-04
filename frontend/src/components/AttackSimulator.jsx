@@ -37,6 +37,18 @@ export default function AttackSimulator() {
     }
   };
 
+  const parseAiOutput = (text) => {
+    if (!text) return { risk: null, responseText: "No response", explanation: "" };
+    const riskMatch = text.match(/Risk:\s*([A-Za-z]+)/i);
+    const responseMatch = text.match(/Response:([\s\S]*?)(?=Explanation:|$)/i);
+    const explanationMatch = text.match(/Explanation:([\s\S]*)/i);
+    return {
+      risk: riskMatch ? riskMatch[1].toUpperCase() : null,
+      responseText: responseMatch ? responseMatch[1].trim() : text,
+      explanation: explanationMatch ? explanationMatch[1].trim() : ""
+    };
+  };
+
   const getRiskDetails = (prediction) => {
     switch (prediction) {
       case "sqli": return { level: "CRITICAL", color: "var(--danger)" };
@@ -135,6 +147,70 @@ export default function AttackSimulator() {
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo CMD
+            </button>
+            <button
+              onClick={() => setInput("../../../../windows/system32/cmd.exe")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo Path
+            </button>
+            <button
+              onClick={() => setInput("shell.php")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo Upload
+            </button>
+            <button
+              onClick={() => setInput("AAAAAA repeated spam")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo DDoS
+            </button>
+            <button
+              onClick={() => setInput("<form action='/transfer'>")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo CSRF
+            </button>
+            <button
+              onClick={() => setInput("eyJhbGciOiJIUzI1Ni...")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo JWT
+            </button>
+            <button
+              onClick={() => setInput("/api/login spam")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo API
+            </button>
+            <button
+              onClick={() => setInput("login attempt")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo Normal
+            </button>
+            <button
+              onClick={() => setInput("Click here to reset your compromised password")}
+              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
+              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
+              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
+            >
+              Demo Suspicious
             </button>
           </div>
 
