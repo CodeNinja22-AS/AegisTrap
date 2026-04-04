@@ -1,23 +1,61 @@
 # 🛡️ AegisTrap: The Agentic Cyber-Deception Shield
 
-![AegisTrap Hero](https://github.com/CodeNinja22-AS/AegisTrap/raw/main/docs/assets/banner.png) 
-*Note: Representative visualization of the AegisTrap ecosystem.*
+```text
+ █████╗ ███████╗ ██████╗ ██╗███████╗████████╗██████╗  █████╗ ██████╗ 
+██╔══██╗██╔════╝██╔════╝ ██║██╔════╝╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗
+███████║█████╗  ██║  ███╗██║███████╗   ██║   ██████╔╝███████║██████╔╝
+██╔══██║██╔══╝  ██║   ██║██║╚════██║   ██║   ██╔══██╗██╔══██║██╔═══╝ 
+██║  ██║███████╗╚██████╔╝██║███████║   ██║   ██║  ██║██║  ██║██║     
+╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     
+                                                                      
+[ AGENTIC HONEYPOT AS A SERVICE | LLM-DRIVEN DECEPTION | SOC INTEL ]
+```
+
+[![AegisTrap Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge&logo=shield-halved)](file:///c:/Users/Abhrant Singh/Desktop/Projects/Hackathon Projects/AegisTrap/AegisTrap/README.md)
+[![AI Engine](https://img.shields.io/badge/AI-Mistral--7B-blueviolet?style=for-the-badge&logo=ai)](file:///c:/Users/Abhrant Singh/Desktop/Projects/Hackathon Projects/AegisTrap/AegisTrap/README.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 🌌 Sector 1: The Aegis Initiative
+## 🛠️ Sector 0: Tactical Manifest & Prerequisites
+
+Before initiating the Aegis Initiative, ensure your local environment is equipped with the following tactical components:
+
+| Layer | Requirement | Tactical Command |
+| :--- | :--- | :--- |
+| **System** | Python 3.9+, Node.js 18+ | `python --version` \| `node -v` |
+| **Backend** | FastAPI, Flask, ML Stack | `pip install -r requirements.txt` |
+| **Frontend** | React 19, Vite, Recharts | `npm install` |
+| **Secrets** | Hugging Face Token, SMTP | Edit `backend/.env` |
+
+---
+
+## 🌌 The Aegis Initiative: Deceptive Defense
+
 **AegisTrap** is a next-generation Cybersecurity Operations Center (SOC) intelligence platform that shifts the paradigm from "Passive Defense" to **"Active Deception"**. 
 
-Traditional honeypots are static, linear, and easily identified by sophisticated attackers. AegisTrap evolves this concept by deploying **Agentic Interceptors**—distributed nodes powered by Large Language Models (LLMs)—that hallucinate complex, stateful, and seemingly vulnerable infrastructures. 
+Traditional honeypots are static and easily fingerprinted. AegisTrap evolves this concept by deploying **Agentic Interceptors**—distributed nodes powered by Large Language Models (LLMs)—that hallucinate complex, stateful, and seemingly vulnerable infrastructures. 
 
 > [!IMPORTANT]
 > **Mission Objective**: Exhaust attacker resources, capture high-fidelity threat intelligence, and provide zero-risk environments for live attack analysis.
 
 ---
 
+## ⚡ Tactical Intelligence Dashboard
+
+| Vector | AegisTrap Capability | Attacker Payload | Deceptive Response |
+| :--- | :--- | :--- | :--- |
+| **SQLi** | Dynamic Schema Hallucination | `' OR 1=1 --` | `mysql> SELECT * FROM users...` (Fake hashes) |
+| **Cmd Injection** | Sandboxed Virtual Shell | `; cat /etc/shadow` | `root:x:0:0:root:/root:/bin/bash...` |
+| **LFI/RFI** | Infinite Directory Recursion | `../../etc/passwd` | Hallucinated sensitive file content |
+| **API Abuse** | AI-Driven Priority Scoring | Rate limiting probe | `{"error": {"code": 429, "message": "Too Many..."}}` |
+
+---
+---
+
 ## ⚙️ Sector 2: System Capabilities
 
-### 🧠 Agentic Deception (Powered by Qwen-2.5-7B)
+### 🧠 Agentic Deception (Powered by Mistral-7B)
 Unlike traditional responses, AegisTrap uses LLMs to generate **non-linear responses**. If an attacker tries to inject SQL, the AI hallucinates a database schema and "leaks" fake data to keep them digging. If they try a Shell injection, they find themselves in a sandboxed, hallucinated terminal.
 
 ### 🌪️ The Chaos Engine
@@ -35,14 +73,56 @@ Full synchronization with India Standard Time (IST) for precision logging, shift
 
 ```mermaid
 graph TD
-    A[Attacker] -->|Request| B(Wraith Node: HTTP/SSH Trap)
-    B -->|Async Payload Forward| C{Aegis Core: FastAPI}
-    C -->|Contextual Analysis| D[Cerebro: AI Engine]
-    D -->|Hallucinated Response| B
-    B -->|Deceptive Output| A
-    C -->|Alerting| E[SOC Dashboard & Analyst]
-    E -->|Shift Check| F[Automation Service]
-    F -->|Email/SMS| G[On-Duty Analyst]
+    subgraph Frontend_Layer["FRONTEND (REACT)"]
+        FE[Dashboard, Simulator, Logs, Insights]
+    end
+
+    subgraph Gateway["API GATEWAY (FASTAPI)"]
+        GW[/Attack, Logs, Analysis, Settings/]
+    end
+
+    subgraph Processing_Core["CORE ENGINES"]
+        ML[ML LAYER: Classification & Control]
+        PE[PAYLOAD ENGINE: Mutation & Noise]
+        SE[SESSION ENGINE: Context & Memory]
+    end
+
+    subgraph Deception_Hub["AI DECEPTION"]
+        LLM[LLM ENGINE: MISTRAL-7B]
+        MC[MODE CONTROL: IDS/IPS]
+    end
+
+    subgraph Ops_Intelligence["LOGS & INTEL"]
+        LOG[LOGGING: EVENT STORE]
+        AI[ANALYST INTELLIGENCE]
+        AUTO[AUTOMATION: EMAIL/ALERTS]
+    end
+
+    subgraph Data_Analytics["DATA & VIZ"]
+        DS[DATA & STORAGE LAYER]
+        VZ[VISUALIZATION + ANALYTICS]
+    end
+
+    FE --> GW
+    GW --> ML
+    GW --> PE
+    GW --> SE
+    
+    ML --> LLM
+    PE --> LLM
+    SE --> LLM
+    
+    MC --> LLM
+    MC --> LOG
+    LLM --> LOG
+    
+    LOG --> AI
+    AI --> AUTO
+    
+    LOG --> DS
+    AI --> DS
+    AUTO --> DS
+    DS --> VZ
 ```
 
 ---

@@ -1,0 +1,98 @@
+================================================================================
+🛡️ AEGISTRAP: LOCAL SETUP & DEPENDENCY MANIFEST 🛡️
+================================================================================
+
+This document outlines everything required to deploy the AegisTrap ecosystem 
+locally. For a smooth run, ensure all prerequisites in each sector are met.
+
+--------------------------------------------------------------------------------
+🌌 SECTOR 1: CORE SYSTEM REQUIREMENTS
+--------------------------------------------------------------------------------
+- OS: Windows 10/11, macOS, or Linux (Ubuntu 20.04+ recommended)
+- Python Engine: Python 3.9 or higher (3.11+ recommended)
+- Node.js Runtime: Node.js 18.x or higher
+- Package Managers: pip (Python), npm (Node.js)
+
+--------------------------------------------------------------------------------
+🐍 SECTOR 2: BACKEND DEFENSE (PYTHON)
+--------------------------------------------------------------------------------
+The AegisTrap Core (FastAPI) and ML Services require the following libraries:
+
+Key Frameworks:
+- fastapi & uvicorn         : The primary API brain and ASGI server.
+- flask                     : Powering the distributed Agentic Honeypot nodes.
+- slowapi                   : Rate limiting to prevent core overload.
+- pydantic                  : Strict data validation and settings management.
+
+AI & Machine Learning:
+- requests                  : External communication with Hugging Face (Qwen API).
+- python-dotenv             : Management of sensitive neural keys and tokens.
+- huggingface_hub           : (Optional) Interface for direct model interaction.
+
+Data & Logic:
+- pandas & numpy            : Statistical analysis of threat payloads.
+- sqlite-utils              : Efficient management of the local log database.
+- firebase-admin            : Integration for extended cloud analysis (if enabled).
+
+Communication:
+- aiosmtplib & fastapi-mail : For real-time SOC analyst email alerting.
+
+>> INSTALL COMMAND:
+   cd backend
+   pip install -r requirements.txt
+
+--------------------------------------------------------------------------------
+⚛️ SECTOR 3: INTERFACE ACTIVATION (NODE.JS)
+--------------------------------------------------------------------------------
+The AegisTrap SOC Dashboard is built on React + Vite:
+
+Core Libraries:
+- react & react-dom         : Modern UI composition.
+- react-router-dom          : Navigation between Feed, Insights, and Settings.
+- axios                     : Real-time communication with the FastAPI core.
+
+Visuals & Analytics:
+- lucide-react              : Premium icon set for high-tech aesthetics.
+- recharts                  : dynamic data visualization for attack trends.
+- framer-motion             : Smooth animations for a high-end feel.
+
+Development Tools:
+- vite                      : Lightning-fast build and HMR tool.
+- eslint                    : ensuring consistent codebase health.
+
+>> INSTALL COMMAND:
+   cd frontend
+   npm install
+
+--------------------------------------------------------------------------------
+📡 SECTOR 4: DISTRIBUTED WRAITH NODES (TRAPS)
+--------------------------------------------------------------------------------
+AegisTrap's distributed honeypots require:
+- Flask (for the interceptor endpoints).
+- threading (for non-blocking async payload forwarding).
+
+>> ACTIVATE INDIVIDUAL TRAP:
+   python backend/agentic_honeypots/http_trap.py
+
+--------------------------------------------------------------------------------
+🔑 SECTOR 5: NEURAL CONFIGURATION (.ENV)
+--------------------------------------------------------------------------------
+Ensure the following keys exist in your `backend/.env` file:
+
+- HF_TOKEN                  : Your Hugging Face API token (for Qwen-2.5-7B).
+- SENDER_EMAIL              : The email address used for SOC alerts.
+- EMAIL_PASSWORD            : App-specific password for the alert email.
+- AEGISTRAP_CORE_URL        : The endpoint for your core backend (default: http://127.0.0.1:8000).
+
+--------------------------------------------------------------------------------
+🚀 QUICKSTART SUMMARY
+--------------------------------------------------------------------------------
+1. Clone the Aegis Initiative.
+2. Navigate to /backend, install requirements, and set up your .env.
+3. Start the FastAPI server: `uvicorn app.main:app --reload`.
+4. Navigate to /frontend and run `npm install`.
+5. Launch the Dashboard: `npm run dev`.
+6. Deploy a Wraith Node: `python backend/agentic_honeypots/http_trap.py`.
+
+AegisTrap - Where every probe is a ghost.
+================================================================================
