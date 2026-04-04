@@ -1,13 +1,16 @@
 from flask import Flask, request, jsonify
 import requests
 import threading
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import json
 
 app = Flask(__name__)
 
 # The Central AegisTrap Server
 AEGISTRAP_CORE_URL = "http://127.0.0.1:8000/attack"
+
+def get_now_ist():
+    return datetime.now(timezone(timedelta(hours=5, minutes=30)))
 
 def forward_to_core(payload_data, source_node):
     """Asynchronously forwards the attack to the ML backend so the honeypot doesn't block."""
@@ -16,9 +19,10 @@ def forward_to_core(payload_data, source_node):
             "input": payload_data,
             "source": source_node
         }, timeout=3)
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚨 Threat forwarded to AegisTrap Core: {payload_data}")
+        print(f"[{get_now_ist().strftime('%H:%M:%S')}] 🚨 Threat forwarded to AegisTrap Core: {payload_data}")
     except requests.exceptions.RequestException as e:
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] ❌ Failed to contact Core: {e}")
+        print(f"[{get_now_ist().strftime('%H:%M:%S')}] ❌ Failed to contact Core: {e}")
+
 
 @app.route("/", defaults={'path': ''}, methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 @app.route("/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])

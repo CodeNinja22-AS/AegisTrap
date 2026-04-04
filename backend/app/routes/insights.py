@@ -4,6 +4,7 @@ import os
 from collections import Counter
 from app.utils.logger import get_file_path
 from datetime import datetime, timedelta
+from app.utils.time_utils import get_now_ist
 import random
 
 router = APIRouter()
@@ -13,7 +14,8 @@ def get_insights(mode: str = "demo"):
     if mode == "demo":
         # Generate rich dashboard data simulating a heavy cyber attack over 24 hours
         time_series = []
-        now = datetime.now()
+        now = get_now_ist()
+
         
         for i in range(24, -1, -1):
             target_hour = now - timedelta(hours=i)

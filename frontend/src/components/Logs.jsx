@@ -163,7 +163,8 @@ export default function Logs() {
         ) : filteredLogs.length > 0 ? (
           filteredLogs.map((log, index) => {
             const [timestamp, payload, prediction, response] = log;
-            const timeStr = new Date(timestamp).toLocaleString();
+            const timeStr = new Date(timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
             const riskColor = getRiskColor(prediction);
             const riskBadge = getRiskBadge(prediction);
             

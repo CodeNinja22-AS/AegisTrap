@@ -2,7 +2,9 @@ import traceback
 from app.services.ml_service import predict_attack
 from app.services.ai_service import generate_ai_response
 from app.utils.logger import log_attack
+from app.utils.time_utils import get_now_ist
 from datetime import datetime
+
 from pydantic import BaseModel
 
 class AttackRequest(BaseModel):
@@ -21,7 +23,8 @@ try:
     
     print("Logging...")
     log_attack({
-        "timestamp": str(datetime.now()),
+        "timestamp": get_now_ist().isoformat(),
+
         "input": data.input,
         "attack_type": attack_type,
         "response": ai_output

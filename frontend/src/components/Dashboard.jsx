@@ -176,7 +176,8 @@ export default function Dashboard() {
             {logs.length > 0 ? (
               [...logs].reverse().slice(0, 50).map((log, idx) => {
                 const [timestamp, payload, prediction] = log;
-                const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                const timeStr = new Date(timestamp).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
                 
                 let color = "var(--primary)";
                 if (prediction === "sqli" || prediction === "command_injection" || prediction === "ddos_pattern") color = "var(--danger)";

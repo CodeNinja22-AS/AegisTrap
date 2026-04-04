@@ -10,7 +10,9 @@ from app.services.report_service import generate_report
 from app.services.email_service import send_email
 from app.utils.settings_manager import load_settings
 from app.utils.logger import log_attack
+from app.utils.time_utils import get_now_ist
 # from app.services.payload_service import generate_final_payload
+
 
 # 🔹 Task 2: Security Layer Services
 from app.services.mode_service import get_mode_behavior
@@ -105,11 +107,12 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
 
     # 🔹 Step 7: Log data preparation
     log_entry = {
-        "timestamp": str(datetime.now()),
+        "timestamp": get_now_ist().isoformat(),
         "input": enhanced_payload,
         "original_input": data.input,
         "attack_type": attack_type,
         "response": ai_output,
+
         "session_id": data.source,
         "stage": session["stage"],
         "metadata": {

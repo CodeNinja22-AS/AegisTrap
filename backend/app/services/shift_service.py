@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+from app.utils.time_utils import get_now_ist
 
 def is_within_shift(shift_string: str) -> bool:
     """
@@ -15,7 +16,9 @@ def is_within_shift(shift_string: str) -> bool:
         if len(times) < 2:
             return True
 
-        now = datetime.now().time()
+        now = get_now_ist().time()
+
+
         start_time = datetime.strptime(times[0], "%H:%M").time()
         end_time = datetime.strptime(times[1], "%H:%M").time()
 

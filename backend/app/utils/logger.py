@@ -1,6 +1,7 @@
 import csv
 import os
 from datetime import datetime
+from app.utils.time_utils import get_now_ist
 
 base_dir = os.path.dirname(os.path.dirname(__file__)) # goes to app/
 db_dir = os.path.join(base_dir, "database")
@@ -25,7 +26,7 @@ def save_log(data, prediction, response, mode="demo"):
     with open(target_path, "a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow([
-            datetime.now().isoformat(),
+            get_now_ist().isoformat(),
             data.get("input"),
             prediction,
             response
@@ -36,8 +37,9 @@ def log_attack(log_data: dict, mode="demo"):
     with open(target_path, "a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow([
-            log_data.get("timestamp", datetime.now().isoformat()),
+            log_data.get("timestamp", get_now_ist().isoformat()),
             log_data.get("input", ""),
             log_data.get("attack_type", "unknown"),
             log_data.get("response", "")
         ])
+
