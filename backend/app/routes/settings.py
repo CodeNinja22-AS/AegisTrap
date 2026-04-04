@@ -15,6 +15,7 @@ class SettingsSchema(BaseModel):
     mode: str
     ai_threshold: str
     siem_enabled: bool
+    work_mode: str
     analyst_name: Optional[str] = "Unknown Analyst"
     shift_time: Optional[str] = "09:00 - 17:00 (Day)"
 

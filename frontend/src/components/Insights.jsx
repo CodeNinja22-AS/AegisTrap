@@ -34,8 +34,8 @@ export default function Insights() {
 
   useEffect(() => {
     fetchInsights();
+    // Refresh insights occasionally
     const interval = setInterval(fetchInsights, 10000);
-    
     return () => clearInterval(interval);
   }, []);
 
@@ -55,7 +55,7 @@ export default function Insights() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
       
-      {/* [F-003.12 | BLOCK-1.1] Analysis Header */}
+      {/* Top Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
         <div>
           <h1 style={{ margin: 0, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -66,7 +66,6 @@ export default function Insights() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {/* [F-011.7 | DECISION-1] Operational Mode Visibility */}
           {data.mode === 'dummy' ? (
             <div style={{ background: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.3)', color: 'var(--warning)', padding: '0.5rem 1rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold', letterSpacing: '0.05em' }}>
               SIMULATION MODE ACTIVE
@@ -79,11 +78,10 @@ export default function Insights() {
         </div>
       </div>
 
-      {/* [F-003.12 | BLOCK-1.2] Advanced Reporting Grid */}
+      {/* Main Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1.5rem' }}>
         
-        {/* [F-003.12 | BLOCK-1.3] Time Series Threat Velocity Chart */}
-        {/* Visualizes chronological distribution of detected threats */}
+        {/* Row 1: Time Series Area Chart */}
         <div className="cyber-card transition-enter" style={{ gridColumn: 'span 12', padding: '1.5rem', animationDelay: '0s' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
             <span style={{ color: 'var(--accent-cyber)' }}>//</span> 24-HOUR THREAT VELOCITY
@@ -91,7 +89,6 @@ export default function Insights() {
           <div style={{ width: '100%', height: '450px' }}>
             <ResponsiveContainer>
               <AreaChart data={data.time_series} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
-                {/* [F-003.12 | BLOCK-1.3.1] Gradient Definitions */}
                 <defs>
                   <linearGradient id="colorSqli" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor={COLORS.sqli} stopOpacity={0.3}/>
@@ -163,8 +160,7 @@ export default function Insights() {
           </div>
         </div>
 
-        {/* [F-003.12 | BLOCK-1.4] Infection Vectors (BarChart) */}
-        {/* Identifies the most common methods used in active campaigns */}
+        {/* Row 2: Left - Top Payloads */}
         <div className="cyber-card transition-enter" style={{ gridColumn: 'span 7', padding: '1.5rem', animationDelay: '0.1s' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
             <span style={{ color: 'var(--danger)' }}>//</span> FREQUENT INFECTION VECTORS
@@ -191,8 +187,7 @@ export default function Insights() {
           </div>
         </div>
 
-        {/* [F-003.12 | BLOCK-1.5] Classification Accuracy (PieChart) */}
-        {/* Visualization of ML pipeline categorization reliability */}
+        {/* Row 2: Right - ML Confidence Pie */}
         <div className="cyber-card transition-enter" style={{ gridColumn: 'span 5', padding: '1.5rem', animationDelay: '0.2s' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
             <span style={{ color: 'var(--warning)' }}>//</span> ML PIPELINE CLASSIFICATION
@@ -228,4 +223,3 @@ export default function Insights() {
     </div>
   );
 }
-

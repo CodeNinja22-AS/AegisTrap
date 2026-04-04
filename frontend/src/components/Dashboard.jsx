@@ -66,7 +66,7 @@ export default function Dashboard() {
       <h1 style={{ marginBottom: 0 }}>System Overview</h1>
       
       {/* Section 1: Top Metrics Row */}
-      <div className="metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1.5rem' }}>
         
         <div className="cyber-card" style={{ borderTop: '3px solid var(--text-main)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ color: 'var(--text-dim)', fontSize: '0.875rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>Total Attacks</div>
@@ -131,7 +131,7 @@ export default function Dashboard() {
       </div>
 
       {/* CSS Grid for Section 2 (Graph) & Section 3 (Feed) */}
-      <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
         
         {/* Section 2: Center Graph Area */}
         <div className="cyber-card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
@@ -182,6 +182,8 @@ export default function Dashboard() {
                 if (prediction === "sqli" || prediction === "command_injection" || prediction === "ddos_pattern") color = "var(--danger)";
                 else if (prediction === "xss" || prediction === "suspicious" || prediction === "path_traversal" || prediction === "file_upload_attack" || prediction === "csrf" || prediction === "jwt_attack" || prediction === "api_abuse") color = "var(--warning)";
                 else if (prediction === "bruteforce") color = "var(--accent-cyber)";
+                
+                console.log(prediction, color);
 
                 return (
                   <div key={idx} style={{ 

@@ -51,6 +51,7 @@ Current Stage: {stage}
 Last Table Accessed: {last_table}
 Already Leaked Entities: {leaked}
 System Instability Score: {instability} (Higher = more broken/messy output)
+Last Mutated Payload: {session.get("last_payload", "None")}
 
 ---
 
@@ -60,6 +61,13 @@ Previous interactions:
 Current attack:
 Type: {attack_type}
 Input: {input_text}
+
+---
+
+NOISE & VARIATION HANDLING:
+- The input payload may contain structural noise (comments, suffixes, randomization).
+- Interpret this as a real-world evasion attempt and respond with appropriate system-level logs.
+- Do NOT acknowledge the noise; just let it affect the output if applicable.
 
 ---
 

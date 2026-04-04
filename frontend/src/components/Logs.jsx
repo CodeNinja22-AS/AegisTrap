@@ -117,6 +117,8 @@ export default function Logs() {
               outline: 'none',
               fontFamily: 'monospace'
             }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--text-dim)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
           />
           
           <select
@@ -132,6 +134,8 @@ export default function Logs() {
               cursor: 'pointer',
               fontFamily: 'inherit'
             }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--text-dim)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
           >
             <option value="All">All Threats</option>
             <option value="SQLi">SQL Injection</option>

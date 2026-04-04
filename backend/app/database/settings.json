@@ -1,9 +1,12 @@
 {
-    "analyst_email": "abhrantsingh2226@gmail.com",
+    "analyst_email": "parinitapiplewar@gmail.com",
     "priority_attacks": [],
     "automation_enabled": false,
     "report_tier": "Tier 3",
     "mode": "IDS",
     "ai_threshold": "balanced",
-    "siem_enabled": false
+    "siem_enabled": false,
+    "work_mode": "demo",
+    "analyst_name": "",
+    "shift_time": "09:00 - 17:00 (Day)"
 }

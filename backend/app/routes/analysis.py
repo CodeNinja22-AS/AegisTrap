@@ -3,13 +3,17 @@ import csv
 import os
 from collections import Counter
 from app.utils.logger import get_file_path
+from app.utils.settings_manager import load_settings
 
 router = APIRouter()
 
 @router.get("/analysis")
-def analyze(mode: str = "demo"):
+def analyze(mode: str = None):
+    settings = load_settings()
+    current_mode = mode or settings.get("work_mode", "demo")
+    
     attacks = []
-    target_path = get_file_path(mode)
+    target_path = get_file_path(current_mode)
 
     if not os.path.exists(target_path):
         return {

@@ -8,9 +8,7 @@ DEFAULT_SETTINGS = {
     "priority_attacks": ["sqli", "command_injection", "xss"],
     "automation_enabled": True,
     "report_tier": "Tier 1",
-    "mode": "IDS",
-    "ai_threshold": "balanced",
-    "siem_enabled": False
+    "work_mode": "demo"
 }
 
 def load_settings():

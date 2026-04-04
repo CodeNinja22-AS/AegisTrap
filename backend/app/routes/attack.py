@@ -10,6 +10,7 @@ from app.services.report_service import generate_report
 from app.services.email_service import send_email
 from app.utils.settings_manager import load_settings
 from app.utils.logger import log_attack
+from app.services.payload_service import generate_final_payload
 
 # 🔹 Task 2: Security Layer Services
 from app.services.mode_service import get_mode_behavior
@@ -64,6 +65,14 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     siem_enabled = settings.get("siem_enabled", False)
 
     attack_type, confidence = predict_attack(data.input)
+    
+    # 🔥 NEW: Payload Mutation Engine
+    enhanced_payload = generate_final_payload(
+        user_input=data.input,
+        attack_type=attack_type
+    )
+    session["last_payload"] = enhanced_payload
+    
     threshold = get_threshold_config(threshold_lvl)
 
     # 🔹 AI Sensitivity Check
@@ -91,7 +100,7 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     else:
         # 🔥 IDS MODE: Dynamic AI Deception
         ai_output = generate_ai_response(
-            input_text=data.input, 
+            input_text=enhanced_payload, 
             attack_type=attack_type,
             session=session,
             directive=behavior["directive"]
@@ -100,7 +109,8 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     # 🔹 Step 7: Log data preparation
     log_entry = {
         "timestamp": str(datetime.now()),
-        "input": data.input,
+        "input": enhanced_payload,
+        "original_input": data.input,
         "attack_type": attack_type,
         "response": ai_output,
         "session_id": data.source,
@@ -113,7 +123,7 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     }
 
     # 🔹 Step 8: Log to CSV
-    log_attack(log_entry)
+    log_attack(log_entry, mode=settings.get("work_mode", "demo"))
 
     # 🔹 Stage 9: External Integration (SIEM & Automation)
     if siem_enabled:

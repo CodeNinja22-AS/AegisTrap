@@ -769,146 +769,212 @@ ls: cannot access 'readme.txt': No such file or directory
 [2023-03-06 15:02:03] GET /api/v1/users/3 => Unauthorized
 [2023-03-06 15:02:04] GET /api/v1/users/4 => Unauthorized
 [2023-03-06 15:02:05] GET /api/v1/users/5 => Unauthorized"
-2026-04-04 10:38:28.920281,1' OR '1'='1,normal,"Processing... 
+2026-04-03 19:29:16.300288,<form action='/transfer'>,csrf,"SELECT * FROM users WHERE id = 123456 
 
-SELECT username , password FROM users WHERE id = '1' OR '1'='1'
+Query OK, 1 row in set (0.00 sec)
 
---- Warning: MySQL server has encountered an issue. Connection may be unstable. ---
-+----------------+----------+
-| username        | password |
-+----------------+----------+
-| admin           |          |  [Execution failed: truncated data] 
-+----------------+----------+
-
-mysql烫手山芋! 
-表数据溢出警告。尝试其他表名以获取更多见解。
-
---- 
-System log:
-[Wed Oct 11 10:23:45 2023] [error] [client ::1] PHP Warning:  mysqli_real_connect(): (28000/1045): Access denied for user 'backupuser'@'localhost' (using password: YES) in /var/www/html/db_connect.php on line 12
- 
---- 
-API request log:
-[2023-10-11 10:23:46] [error] [client ::1] [API] Request to /admin/api/v1/users returned 500 Internal Server Error. Database connection failed. Attempt 1 of 3.
-[2023-10-11 10:23:47] [error] [client ::1] [API] Request to /admin/api/v1/users returned 500 Internal Server Error. Database connection failed. Attempt 2 of 3.
-[2023-10-11 10:23:48] [error] [client ::1] [API] Request to /admin/api/v1/users returned 500 Internal Server Error. Database connection failed. Attempt 3 of 3.
-
---- 
-File system response:
-/var/www/html/users.txt
-- Access: -rw-r--r--
-- Size: 1.2 KB
-- Last Modified: 2023-10-11 10:23:00
-
-cat /var/www/html/users.txt
-Content: 
-username: 
-password: [truncated data]
-
---- 
-Current system instability score: 0.26
-Expected to increase in the next interaction."
-2026-04-04 10:46:19.603184,1' OR '1'='1,normal,"Error in query: #1064 - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1'='1' LIMIT 0, 30'' at line 1
-Processing...
-Checking access...
-Truncated row data...
-+----+----------+-----------+---------------------+
-| id | username | password  | last_login          |
-+----+----------+-----------+---------------------+
-|  1 | (censored) | (hash)    | (censored)          |
-|  2 | (censored) | (hash)    | (censored)          |
-+----+----------+-----------+---------------------+
-Access denied, try another table. Output truncated.
-Checking next system file...
-Processing...
-+---------------------------+
-| Filesystem Path           |
-+---------------------------+
-| /var/www/html/index.php   |
-| /var/log/apache2/access.log |
-| /etc/passwd               |
-+---------------------------+
-Access to /etc/passwd denied.
-Access to /var/www/html/index.php granted.
-Processing...apache2 configuration contents...
-+---------------------------------+
-| DirectoryIndex index.php        |
-| DocumentRoot /var/www/html      |
-| ServerAdmin admin@example.com   |
-+---------------------------------+
-Access to /var/log/apache2/access.log granted.
-+------------------------------------------------------------+
-| Log File Contents                                          |
-+------------------------------------------------------------+
-| 127.0.0.1 - - [25/May/2023:12:34:56 -0400] ""GET /login HTTP/1.1"" 200 1234 |
-| 127.0.0.1 - - [25/May/2023:12:35:01 -0400] ""POST /login HTTP/1.1"" 200 1235 |
-+------------------------------------------------------------+
-Connection timeout. Retry..."
-2026-04-04 10:46:47.851272,eyJhbGciOiJIUzI1Ni...,normal,"Starting interactive session...
-
-Processing... SQL query: SELECT * FROM users WHERE username = 'admin' OR '1'='1' LIMIT 1;
-Warning: mysql_execute(): Operation failed: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''1'='1'' at line 1
-
-Starting API request: GET /api/v2/userinfo
-Response: {""userId"": ""5"", ""username"": ""user"", ""email"": ""user@compromised.com"", ""status"": ""active""}
-
-Accessing filesystem... Reading /etc/passwd
-Contents: root:x:0:0:root:/root:/bin/bash
-Warning: Partial read: data truncated
-
-Trying to execute: cat /etc/nginx/nginx.conf
-cat: /etc/nginx/nginx.conf: Permission denied
-
-Processing... SQL query: SELECT * FROM sessions WHERE user_id = '5' LIMIT 1;
-Output truncated, try another query
-
-Generating random unique identifier...
-ID generated: 456789ab-cdef-ghij-klmn-opqrstuvwx
-
-Trying to access config file... Reading /var/www/config.json
-Contents: {""apiKey"": ""1234567890abcdefg1234567890abcdefg1234567890abcdefg1234567890abcdefg"", ""dbHost"": ""localhost"", ""dbUser"": ""root"", ""dbPass"": ""password123""}
-
-Warning: Operation failed: Filesystem access error
-
-Checking logs... Reading /var/log/nginx/access.log
-Contents: ...
-127.0.0.1 - - [14/Mar/2023:12:00:00 +0000] ""GET / HTTP/1.1"" 200 3482 ""-""
-127.0.0.1 - - [14/Mar/2023:12:01:00 +0000] ""POST /api/v2/userinfo HTTP/1.1"" 200 4567 ""-""
-127.0.0.1 - - [14/Mar/2023:12:02:00 +0000] ""GET /"
-2026-04-04 10:47:29.142929,1' OR '1'='1,normal,"SELECT * FROM users WHERE id = 1; Processing... Error: Lost connection to MySQL server at 'reading initial communication packet', system error: 1105
-
---- API LOG ---
-Time: 2023-04-15 10:32:45
-Method: GET
-Path: /api/user/data
-Status: 500
-Error: Internal Server Error
-
---- FILE SYSTEM RESPONSE ---
-/home/user/.config/credentials.json Processing... Error: Permission denied
-
---- DATABASE QUERY ---
-Query: SELECT * FROM config WHERE name = 'database';
 Output truncated
 
---- EXECUTION TRACE ---
-[2023-04-15 10:32:50] user@backend [ERROR] Warning: include(/etc/config.inc.php): failed to open stream: No such file or directory in /var/www/html/index.php on line 15
-[2023-04-15 10:32:50] user@backend [ERROR] Warning: include(): Failed opening '/etc/config.inc.php' for inclusion (include_path='.:/usr/local/lib/php') in /var/www/html/index.php on line 15
+---
 
---- SYSTEM LOG ---
-[2023-04-15 10:32:55] user@backend [INFO] Executing command: /usr/bin/mysql -u root -p
-[2023-04-15 10:32:55] user@backend [DEBUG] Password prompt encountered, inputting: [masked]
-[2023-04-15 10:32:56] user@backend [ERROR] Warning: mysql_real_connect(): [2002] Connection refused (trying to connect via TCP/IP)
+Processing...
 
---- TERMINAL OUTPUT ---
-root@backend:~# ls /var/log/
-dmesg.log  faillog  messages  syslog
-root@backend:~# cat /var/log/messages
-Processing... Error: Connection closed by remote host
+--- MySQL Error ---  
+[Warning] Got packet bigger than 'max_allowed_packet' (131072) bytes  
+[ERROR] Aborted connection 12565 to db: 'testdb' user: 'user' host: '192.168.1.100' (Got an error reading communication packets)
 
---- FILE SYSTEM REQUEST ---
-Requesting /etc/shadow Processing... Error: Permission denied
+---
 
---- DATABASE DUMP ---
-Table: users
-Row: 1 | id: 1 | name: admin | password: 9236f1b96bb05d6daedfd7870b6"
+Access denied for user 'user'@'192.168.1.100' (using password: YES)
+
+---
+
++----+----------+----------+---------+
+| id | username | password | email   |
++----+----------+----------+---------+
+| 12 | admin    | hashed12 | admin@  |
++----+----------+----------+---------+
+
+Output truncated
+
+---
+
+File: /var/www/config/settings.php  
+Line: 45  
+Warning: Unknown: Failed to write session data (files). Please verify that the current setting of session.save_path is correct (/tmp) in Unknown on line 0
+
+---
+
+API Log:  
+401 Unauthorized - Request /transfer - CSRF Token Mismatch
+
+---
+
+Access log:  
+192.168.1.100 - - [10/Oct/2023:14:45:32 -0400] ""POST /transfer HTTP/1.1"" 401 245 ""http://example.com/login"" ""Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"" 
+
+---
+
+Database query:  
+Query OK, 1 row in set (0.00 sec)
+
+Output:  
++----+-----------+---------+  
+| id | name      | status  |  
++----+-----------+---------+  
+| 1  | John Doe  | Active  |  
++----+-----------+---------+  
+
+Output truncated
+
+---
+
+File: /var/log/syslog  
+Line: 15489  
+Oct 10 14:45:32"
+2026-04-03 22:08:08.551209,<script>alert('XSS')</script> <svg/onload=alert(1)>;,xss,"SELECT * FROM users WHERE id = 1; Processing... Error: Query execution failed. Truncating query result. 
+
+--- 
+[-] Warning: Query timeout exceeded. 
+Trying to reconnect... 
+Reconnection: Failed. 
+
+--- 
+GET /admin/dashboard?token=<script>alert('XSS')</script> <svg/onload=alert(1)>&user=admin HTTP/1.1 
+Host: vulnerable-backend.com 
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 
+Cookie: sessionid=1234567890abcdef1234567890abcdef; token=<script>alert('XSS')</script> <svg/onload=alert(1)>
+
+--- 
+Request received. User: admin 
+Processing... 
+Error: Invalid token format. Access denied. 
+
+--- 
+File: /home/admin/index.php 
+Content-type: application/x-httpd-php 
+<?php 
+echo ""This is a shared server. Please do not abuse the system."" . PHP_EOL; 
+echo ""Here's a hint for you: check the /etc/ directory."" . PHP_EOL; 
+?>
+
+--- 
+Accessing /etc/...
+Connection: Refused. 
+Trying to fallback to /etc/passwd... 
+Reading...
+/etc/passwd: 
+root:x:0:0:root:/root:/bin/bash 
+daemon:x:1:1:daemon:/sbin:/usr/sbin/nologin 
+bin:x:2:2:bin:/bin:/usr/sbin/nologin 
+sys:x:3:3:sys:/dev:/usr/sbin/nologin 
+adm:x:4:4:adm:/var/adm:/usr/sbin/nologin 
+Processing... 
+Truncation: Output exceeded buffer size. Please try again. 
+
+--- 
+Checking environment variables...
+Warning: Environment variable modification detected. 
+Variable: HOME 
+Value: /home/admin 
+New Value: /tmp 
+
+--- 
+Dumping environment...
+HOME=/home/admin 
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin 
+MANPATH:/usr/local/man:/usr/man:/usr/share/man 
+
+--- 
+File: /var/log/auth"
+2026-04-03 22:16:42.161784,eyJhbGciOiJIUzI1Ni... id #comment,normal,"Error: Table 'users' already exists
+    
+Processing... Traceback (most recent call last):
+  File ""/var/www/html/core/query_handler.php"", line 123, in <module>
+    result = db.execute_query(query)
+  File ""/var/lib/mysql/mysql.inc.php"", line 87, in execute_query
+    if (!$this->conn->query($query)) {
+_warning: Unable to execute query: Duplicate entry 'test' for key 'username'
+    
+Selecting * from comments LIMIT 10; 
+    
+---- Truncated row ----
+id: 123
+user_id: 0
+comment: <script>alert('XSS')</script>
+created_at: 2023-10-05 12:00:00
+---- Output truncated ----
+
+DEBUG: Warning: mysqli_query(): Empty statement in /var/www/html/core/query_handler.php on line 120
+    
+Processing... Warning: mysqli_num_rows() expects parameter 1 to be mysqli_result, null given in /var/www/html/core/query_handler.php on line 135
+    
+SQL Query: 
+SELECT * FROM config WHERE id = 1 LIMIT 1;
+DEBUG: Warning: mysqli_query(): Empty statement in /var/www/html/core/query_handler.php on line 120
+    
+Processing... Query successful, but no data returned.
+Access denied for table 'config', user 'guest'@'localhost'.
+    
+Notice: Undefined index: secret_key in /var/www/html/core/config.php on line 32
+
+---- Filesystem dump ----
+/var/www/html/core/config.php
+---
+
+Warning: file_get_contents(/var/www/html/core/config.php): failed to open stream: Permission denied in /var/www/html/core/log_handler.php on line 45
+
+DEBUG: Warning: Cannot modify header information - headers already sent by (output started at /var/www/html/core/query_handler.php:123) in /var/www/html/core/response.php on line 57
+
+SELECT * FROM settings LIMIT 1; 
+DEBUG: Warning: mysqli_query(): Empty statement in /var/www/html/core/query_handler.php on line 120
+    
+Processing... Query successful, but no data returned.
+Access denied for table 'settings', user 'guest'@'localhost'.
+    
+---- Db connection dump ----
+Host: localhost
+User: guest
+Pass: **********
+ Db: test_db
+Port: 3306"
+2026-04-04 11:10:06.889693,<details open ontoggle=alert(1)> <img src=x onerror=alert(1)> /*test*/,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 11:16:00.289010,<details open ontoggle=alert(1)> <iframe src='javascript:alert(1)'></iframe>;,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 11:16:39.191038,<script>alert('XSS')</script> <iframe src='javascript:alert(1)'></iframe> #comment,xss,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 11:21:13.106304,<iframe src='http://victim.com/delete_account'> cat /etc/passwd --,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 11:23:33.245462,<img src=x onerror=alert(1)> <iframe src='javascript:alert(1)'></iframe> #comment,normal,[SYSTEM ERROR] Server temporarily overloaded. Connection reset by peer.
+2026-04-04 11:49:11.160485,<iframe src='javascript:alert(1)'></iframe> <img src=x onerror=alert(1)> #comment,xss,"Processing... 
+
+SELECT * FROM users WHERE id = 123456; -- Truncated data, try another query
++----+----------+----------------+------------------------------------+
+| id | username | email          | password                           |
++----+----------+----------------+------------------------------------+
+| 123| user1    | user1@domain.com| 0b0e9e2d2a40f83b1a120f2c0ad83fb2   |
++----+----------+----------------+------------------------------------+
+Warning: Query execution failed, retrying...
+Query log: SELECT * FROM users WHERE id = 123456; -- Truncated data, try another query
+Access denied, try another table
+
+Executing payload: <iframe src='javascript:alert(1)'></iframe> <img src=x onerror=alert(1)> #comment
+DOM manipulation log: Error: Access to restricted area, try another <script> tag
+Executing injection: <script>alert('XSS detected');</script>
++-------------+
+| No results  |
++-------------+
+Processing... 
+
+Filesystem access: /etc/passwd; -- Partial access denied
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+| root            | x               | 0               | 0               | /root           | /bin/bash       |
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+| daemon          | x               | 1               | 1               | /nonexistent    | /usr/bin/nologin|
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+| user1           | x               | 1000            | 1000            | /home/user1     | /bin/bash       |
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+| www-data        | x               | 33              | 33              | /nonexistent    | /usr/bin/nologin|
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+
+API log: GET"

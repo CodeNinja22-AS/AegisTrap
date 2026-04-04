@@ -15,7 +15,7 @@ export default function Layout({ children }) {
   }, []);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: 'var(--bg-dark)', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: 'var(--bg-dark)' }}>
       {/* Sidebar Section */}
       <div className="sidebar-container" style={{ width: '250px', borderRight: '1px solid var(--border-color)', padding: '2rem 0' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>

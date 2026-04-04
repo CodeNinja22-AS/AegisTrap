@@ -18,6 +18,7 @@ export default function Settings() {
   const [mode, setMode] = useState("IDS");
   const [confidence, setConfidence] = useState("balanced");
   const [siemEnabled, setSiemEnabled] = useState(false);
+  const [workMode, setWorkMode] = useState("demo");
   
   // Analyst Profile States
   const [analystName, setAnalystName] = useState("");
@@ -39,6 +40,7 @@ export default function Settings() {
         setConfidence(data.ai_threshold || "balanced");
         setSiemEnabled(data.siem_enabled || false);
         setAnalystName(data.analyst_name || "");
+        setWorkMode(data.work_mode || "demo");
         setShiftTime(data.shift_time || "09:00 - 17:00 (Day)");
         
         // Map backend keys back to display names
@@ -68,7 +70,8 @@ export default function Settings() {
       ai_threshold: updatedFields.confidence ?? confidence,
       siem_enabled: updatedFields.siemEnabled ?? siemEnabled,
       analyst_name: updatedFields.analystName ?? analystName,
-      shift_time: updatedFields.shiftTime ?? shiftTime
+      shift_time: updatedFields.shiftTime ?? shiftTime,
+      work_mode: updatedFields.workMode ?? workMode
     };
 
     fetch("http://localhost:8000/settings", {
@@ -136,6 +139,43 @@ export default function Settings() {
           <h3 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.2rem' }}>
             <span style={{ color: 'var(--accent-cyber)' }}>//</span> OPERATION ENVIRONMENT
           </h3>
+
+          {/* New Work Mode Selection (Demo vs Live) */}
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <button 
+              onClick={() => { setWorkMode("demo"); syncToBackend({ workMode: "demo" }); }}
+              style={{
+                flex: 1,
+                padding: '1rem',
+                borderRadius: '8px',
+                border: workMode === "demo" ? '2px solid var(--accent-cyber)' : '1px solid var(--border-color)',
+                background: workMode === "demo" ? 'rgba(142, 255, 113, 0.1)' : 'transparent',
+                color: workMode === "demo" ? 'var(--accent-cyber)' : 'var(--text-dim)',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s'
+              }}
+            >
+              DEMO SANDBOX
+            </button>
+            <button 
+              onClick={() => { setWorkMode("live"); syncToBackend({ workMode: "live" }); }}
+              style={{
+                flex: 1,
+                padding: '1rem',
+                borderRadius: '8px',
+                border: workMode === "live" ? '2px solid var(--danger)' : '1px solid var(--border-color)',
+                background: workMode === "live" ? 'rgba(255, 77, 77, 0.1)' : 'transparent',
+                color: workMode === "live" ? 'var(--danger)' : 'var(--text-dim)',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.3s'
+              }}
+            >
+              LIVE PRODUCTION
+            </button>
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div onClick={() => { setMode("IDS"); syncToBackend({ mode: "IDS" }); }} style={{
               border: mode === "IDS" ? '1px solid var(--accent-cyber)' : '1px solid var(--border-color)',
