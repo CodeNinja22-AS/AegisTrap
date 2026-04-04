@@ -1,12 +1,15 @@
 import json
 import os
+from dotenv import load_dotenv
 from app.database.connection import db
+
+load_dotenv()
 
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), "..", "database", "settings.json")
 
 DEFAULT_SETTINGS = {
-    "analyst_email": "analyst@example.com",
-    "priority_attacks": ["sqli", "command_injection", "xss"],
+    "analyst_email": os.getenv("MAIL_USERNAME", "analyst@example.com"),
+    "priority_attacks": ["sqli", "command_injection", "xss", "jwt_attack", "path_traversal"],
     "automation_enabled": True,
     "report_tier": "Tier 1",
     "work_mode": "demo"

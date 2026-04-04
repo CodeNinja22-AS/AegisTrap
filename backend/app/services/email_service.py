@@ -35,6 +35,14 @@ async def send_email(subject: str, email: EmailStr, body: str):
 
     try:
         await fast_mail.send_message(message)
-        print(f"[EMAIL SERVICE] Alert sent to {email}")
+        print(f"[EMAIL SERVICE] Alert SUCCESS: Sent to {email}")
+    except ConnectionRefusedError:
+        print("[EMAIL SERVICE] Error: SMTP connection refused. Check your network/proxy.")
     except Exception as e:
-        print(f"[EMAIL SERVICE] Failed to send email: {str(e)}")
+        error_msg = str(e)
+        if "Authentication failed" in error_msg or "535" in error_msg:
+            print("[EMAIL SERVICE] Auth ERROR: Invalid credentials or App Password. Check MAIL_PASSWORD in .env")
+        elif "550" in error_msg:
+            print(f"[EMAIL SERVICE] Error: Rejected recipient {email}. Check if the address is valid.")
+        else:
+            print(f"[EMAIL SERVICE] Unexpected Error: {error_msg}")

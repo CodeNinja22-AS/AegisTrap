@@ -34,12 +34,32 @@ async def run_automation(log_data, settings):
     """
     Background task to generate AI report and send email.
     """
-    report_html = generate_report(log_data, role=settings.get("report_tier", "Tier 1"))
-    await send_email(
-        subject=f"[ALERT] {log_data['attack_type'].upper()} detected - AegisTrap SOC",
-        email=settings["analyst_email"],
-        body=report_html
-    )
+    try:
+        attack_type = log_data.get('attack_type', 'unknown')
+        print(f"[AUTOMATION] Starting report generation for: {attack_type}")
+        
+        # Fallback for email if empty in settings
+        recipient = settings.get("analyst_email") or os.getenv("MAIL_USERNAME")
+        
+        if not recipient:
+            print("[AUTOMATION] Aborted: No analyst email found in settings or .env")
+            return
+
+        report_html = generate_report(log_data, role=settings.get("report_tier", "Tier 1"))
+        
+        if not report_html or "[ERROR]" in report_html:
+            print(f"[AUTOMATION] Failed: Could not generate report for {attack_type}")
+            return
+
+        await send_email(
+            subject=f"[ALERT] {attack_type.upper()} detected - AegisTrap SOC",
+            email=recipient,
+            body=report_html
+        )
+        print(f"[AUTOMATION] Success: Alert sent to {recipient}")
+        
+    except Exception as e:
+        print(f"[AUTOMATION] Critical Error: {str(e)}")
 
 @router.post("/attack")
 async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):

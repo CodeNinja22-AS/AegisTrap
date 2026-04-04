@@ -1,7 +1,7 @@
 {
-    "analyst_email": "",
-    "priority_attacks": [],
-    "automation_enabled": false,
+    "analyst_email": "abhrantdrive3@gmail.com",
+    "priority_attacks": ["sqli", "command_injection", "xss", "jwt_attack", "path_traversal"],
+    "automation_enabled": true,
     "report_tier": "Tier 1",
     "mode": "IDS",
     "ai_threshold": "balanced",
