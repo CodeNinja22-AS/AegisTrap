@@ -18,12 +18,18 @@ def analyze(mode: str = None):
     if db is not None:
         try:
             col = "logs_live" if current_mode == "live" else "logs_demo"
-            docs = db.collection(col).stream()
+            docs = db.collection(col).limit(500).stream()
+            
+            raw_docs = []
             for doc in docs:
-                data = doc.to_dict()
-                # `attack_type` is what we store. `prediction` is the fallback metric mapping.
-                prediction = data.get("prediction", data.get("attack_type", "normal"))
-                attacks.append(prediction)
+                raw_docs.append(doc.to_dict())
+            
+            # 🔥 In-Memory Sort: Newest first (Descending by ISO Timestamp)
+            sorted_docs = sorted(raw_docs, key=lambda x: x.get("timestamp", ""), reverse=True)
+            
+            for data in sorted_docs:
+                p = data.get("attack_type", data.get("prediction", "normal"))
+                attacks.append(p)
                 
             count = Counter(attacks)
             return {

@@ -63,7 +63,35 @@ class LogProcessor:
         structured_log["session_id"] = log_entry.get("session_id") or metadata.get("session_id", "unknown")
         structured_log["stage"] = log_entry.get("stage") or metadata.get("stage", "probing")
         
+        # 🔥 FINAL STEP: Generate clean forensic resolution for UI
+        forensic_indicators = security_flags + exploit_attempts + exfiltration
+        structured_log["forensic_resolution"] = self._create_forensic_resolution(log_entry, forensic_indicators, severity)
+        
         return structured_log
+
+    def _create_forensic_resolution(self, raw_log: dict, forensic_indicators: list, severity: str) -> str:
+        """
+        Creates a clean, professional forensic resolution string for UI display.
+        """
+        res = [
+            "$ [SYSTEM_BOOT_SEQUENCE] Connection Established.",
+            f"$ date: {datetime.now().strftime('%a %b %d %H:%M:%S %Y')}",
+            f"$ [RESOLVED] {raw_log.get('attack_type', 'unknown').upper()} activity intercepted.",
+            f"$ Payload: {raw_log.get('input', '')}"
+        ]
+        
+        if forensic_indicators:
+            res.append(f"$ Indicators: {', '.join(forensic_indicators[:2])}")
+            
+        resp = raw_log.get('response', '')
+        if resp:
+            # Cleanly split by $ if present, otherwise split lines
+            clean_lines = resp.split("$") if "$" in resp else resp.splitlines()
+            for line in clean_lines[:4]: # Limit to 4 relevant lines
+                if line.strip(): res.append(f"$ {line.strip()}")
+            
+        res.append("$ status: 200 OK (IDS Monitoring Active)")
+        return "\n".join(res)
 
     def _deduplicate_lines(self, text: str) -> list:
         if not text: return []
