@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Environment Variables
+.env
+.env.*
+
+# Database
+app/database/*.csv
+agentic_honeypots/llm_honeypot/logs.csv
