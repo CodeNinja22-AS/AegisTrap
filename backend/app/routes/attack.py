@@ -1,4 +1,5 @@
 import re
+import os
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
 from datetime import datetime
@@ -62,7 +63,7 @@ async def run_automation(log_data, settings):
         print(f"[AUTOMATION] Critical Error: {str(e)}")
 
 @router.post("/attack")
-async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
+async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks, mode: str = "demo"):
     # 🔹 Step 1: Session Management
     session = get_session(data.source)
     
@@ -177,7 +178,7 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks):
     }
 
     # 🔹 Step 8: Log to CSV
-    log_attack(log_entry, mode=settings.get("work_mode", "demo"))
+    log_attack(log_entry, mode=mode)
 
     # 🔹 Stage 9: External Integration (SIEM & Automation)
     if siem_enabled:

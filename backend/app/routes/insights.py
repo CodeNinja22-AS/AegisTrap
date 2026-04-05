@@ -1,109 +1,135 @@
 from fastapi import APIRouter
 import csv
 import os
-from collections import Counter
+import json
+from collections import Counter, defaultdict
 from app.utils.logger import get_file_path
 from datetime import datetime, timedelta
 from app.utils.time_utils import get_now_ist
-import random
+from app.database.connection import db
 
 router = APIRouter()
 
 @router.get("/insights")
 def get_insights(mode: str = "demo"):
-    if mode == "demo":
-        # Generate rich dashboard data simulating a heavy cyber attack over 24 hours
-        time_series = []
-        now = get_now_ist()
+    """
+    Returns real-time threat intelligence by aggregating logs from CSV or Firestore.
+    """
+    target_path = get_file_path(mode)
+    time_series_data = defaultdict(lambda: defaultdict(int))
+    payload_counter = Counter()
+    classification_counts = Counter()
+    
+    # 🔹 Data Structure for Frontend
+    attacks_of_interest = [
+        "sqli", "xss", "bruteforce", "command_injection", "path_traversal", 
+        "file_upload_attack", "ddos_pattern", "csrf", "jwt_attack", "api_abuse", "suspicious"
+    ]
 
-        
-        for i in range(24, -1, -1):
-            target_hour = now - timedelta(hours=i)
-            time_series.append({
-                "time": target_hour.strftime("%H:00"),
-                "sqli": random.randint(10, 150),
-                "xss": random.randint(5, 80),
-                "bruteforce": random.randint(20, 200),
-                "command_injection": random.randint(5, 120),
-                "path_traversal": random.randint(10, 90),
-                "file_upload_attack": random.randint(5, 45),
-                "ddos_pattern": random.randint(20, 300),
-                "csrf": random.randint(10, 60),
-                "jwt_attack": random.randint(5, 40),
-                "api_abuse": random.randint(30, 150),
-                "suspicious": random.randint(5, 30)
-            })
+    now = get_now_ist()
+    # Initialize last 24 hours with zeros to ensure smooth charts
+    for i in range(23, -1, -1):
+        hour_str = (now - timedelta(hours=i)).strftime("%H:00")
+        time_series_data[hour_str] = {attack: 0 for attack in attacks_of_interest}
+
+    # 1. Fetch from Firestore if available
+    if db is not None:
+        try:
+            col = "logs_live" if mode == "live" else "logs_demo"
+            # Get logs from last 24 hours
+            since = now - timedelta(hours=24)
+            docs = db.collection(col).where("timestamp", ">=", since.isoformat()).stream()
             
-        return {
-            "mode": "dummy",
-            "time_series": time_series,
-            "top_payloads": [
-                {"payload": "admin' OR '1'='1", "count": 1342, "type": "sqli"},
-                {"payload": "admin123", "count": 856, "type": "bruteforce"},
-                {"payload": "AAAAAA repeated spam", "count": 780, "type": "ddos_pattern"},
-                {"payload": "<script>alert(1)</script>", "count": 643, "type": "xss"},
-                {"payload": "shell.php", "count": 512, "type": "file_upload_attack"},
-                {"payload": "1; DROP TABLE users", "count": 421, "type": "sqli"},
-                {"payload": "/api/login spam", "count": 395, "type": "api_abuse"},
-                {"payload": "../../../../etc/passwd", "count": 310, "type": "path_traversal"},
-                {"payload": "<form action='/transfer'>", "count": 250, "type": "csrf"},
-                {"payload": "; cat /etc/shadow", "count": 215, "type": "command_injection"}
-            ],
-            "classification_accuracy": [
-                {"name": "Confident (ML >90%)", "value": 85},
-                {"name": "Probable (ML 70-90%)", "value": 10},
-                {"name": "Uncertain (ML <70%)", "value": 5}
-            ]
-        }
-    else:
-        # Logic to extract real data from logs_live.csv
-        target_path = get_file_path(mode)
-        time_series_data = {}
-        payload_counter = Counter()
-        
-        if not os.path.exists(target_path):
-             return {
-                 "mode": "live",
-                 "time_series": [],
-                 "top_payloads": [],
-                 "classification_accuracy": []
-             }
-             
-        with open(target_path, "r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if len(row) > 3:
-                    ts_str, payload, prediction, _ = row
+            for doc in docs:
+                data = doc.to_dict()
+                ts_str = data.get("timestamp", "")
+                attack_type = data.get("attack_type", "normal")
+                payload = data.get("input_payload", "N/A")
+                confidence = data.get("risk_assessment", {}).get("confidence", 0)
+                
+                try:
+                    dt = datetime.fromisoformat(ts_str.replace('Z', ''))
+                    hour_key = dt.strftime("%H:00")
+                    if hour_key in time_series_data:
+                        if attack_type in time_series_data[hour_key]:
+                            time_series_data[hour_key][attack_type] += 1
+                except:
+                    pass
+                
+                if attack_type != "normal":
+                    payload_counter[(payload, attack_type)] += 1
+                    
+                # Classification Accuracy Simulation using AI confidence
+                if confidence > 0.9: classification_counts["Confident (ML >90%)"] += 1
+                elif confidence > 0.7: classification_counts["Probable (ML 70-90%)"] += 1
+                else: classification_counts["Uncertain (ML <70%)"] += 1
+
+        except Exception as e:
+            print(f"[INSIGHTS] Firestore error: {e}")
+
+    # 2. Fallback/Sync with Local CSV
+    if os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if len(row) < 4: continue
+                    ts_str, payload, attack_type, full_json_str = row
                     
                     try:
-                        # Parse standard timestamp to extract hour
+                        # Only process data from last 24 hours
                         dt = datetime.fromisoformat(ts_str.replace('Z', ''))
+                        if dt < (now - timedelta(hours=24)): continue
+                        
                         hour_key = dt.strftime("%H:00")
+                        if hour_key in time_series_data:
+                            if attack_type in time_series_data[hour_key]:
+                                time_series_data[hour_key][attack_type] += 1
                         
-                        if hour_key not in time_series_data:
-                            time_series_data[hour_key] = {"time": hour_key, "sqli": 0, "xss": 0, "bruteforce": 0, "suspicious": 0, "command_injection": 0, "path_traversal": 0, "file_upload_attack": 0, "ddos_pattern": 0, "csrf": 0, "jwt_attack": 0, "api_abuse": 0}
+                        if attack_type != "normal":
+                            payload_counter[(payload, attack_type)] += 1
                         
-                        if prediction in time_series_data[hour_key]:
-                            time_series_data[hour_key][prediction] += 1
-                            
-                    except ValueError:
+                        # Extract confidence from JSON if available
+                        full_data = json.loads(full_json_str)
+                        conf = full_data.get("risk_assessment", {}).get("confidence", 0.5)
+                        if conf > 0.9: classification_counts["Confident (ML >90%)"] += 1
+                        elif conf > 0.7: classification_counts["Probable (ML 70-90%)"] += 1
+                        else: classification_counts["Uncertain (ML <70%)"] += 1
+                        
+                    except:
                         pass
-                        
-                    payload_counter[payload] += 1
-        
-        # Sort time series by hour
-        sorted_times = sorted(time_series_data.keys())
-        time_series = [time_series_data[k] for k in sorted_times]
-        
-        # Top 5 payloads
-        top_payloads = [{"payload": p, "count": c, "type": "Real Log"} for p, c in payload_counter.most_common(5) if p and p.strip() != ""]
-        
-        return {
-            "mode": "real",
-            "time_series": time_series,
-            "top_payloads": top_payloads,
-            "classification_accuracy": [
-                {"name": "Auto-Blocked", "value": 90},
-                {"name": "Flagged", "value": 10}
-            ]
-        }
+        except Exception as e:
+            print(f"[INSIGHTS] CSV error: {e}")
+
+    # 🔹 Format for Recharts AreaChart
+    sorted_times = sorted(time_series_data.keys(), key=lambda x: (x < now.strftime("%H:00"), x))
+    time_series = []
+    for k in sorted_times:
+        entry = {"time": k}
+        entry.update(time_series_data[k])
+        time_series.append(entry)
+
+    # 🔹 Format Top Payloads
+    top_payloads = []
+    for (p, t), c in payload_counter.most_common(10):
+        top_payloads.append({"payload": p, "count": c, "type": t})
+
+    # 🔹 Format Classification Accuracy
+    accuracy_data = []
+    total_classified = sum(classification_counts.values())
+    if total_classified == 0:
+        accuracy_data = [
+            {"name": "Confident (ML >90%)", "value": 0},
+            {"name": "Probable (ML 70-90%)", "value": 0},
+            {"name": "Uncertain (ML <70%)", "value": 0}
+        ]
+    else:
+        for name in ["Confident (ML >90%)", "Probable (ML 70-90%)", "Uncertain (ML <70%)"]:
+            accuracy_data.append({"name": name, "value": classification_counts[name]})
+
+    return {
+        "mode": "live" if mode == "live" else "demo",
+        "time_series": time_series,
+        "top_payloads": top_payloads,
+        "classification_accuracy": accuracy_data
+    }

@@ -66,7 +66,7 @@ export default function Insights() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {data.mode === 'dummy' ? (
+          {data.mode === 'demo' ? (
             <div style={{ background: 'rgba(255, 165, 0, 0.1)', border: '1px solid rgba(255, 165, 0, 0.3)', color: 'var(--warning)', padding: '0.5rem 1rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold', letterSpacing: '0.05em' }}>
               SIMULATION MODE ACTIVE
             </div>

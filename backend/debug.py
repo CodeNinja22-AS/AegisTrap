@@ -14,8 +14,8 @@ class AttackRequest(BaseModel):
 try:
     data = AttackRequest(input="1 OR 1=1", source="web")
     print("Running ML...")
-    attack_type = predict_attack(data.input)
-    print("ML Output:", attack_type)
+    attack_type, confidence = predict_attack(data.input)
+    print("ML Output:", attack_type, "Confidence:", confidence)
     
     print("Running AI...")
     ai_output = generate_ai_response(data.input, attack_type)

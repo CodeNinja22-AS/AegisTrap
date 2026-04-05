@@ -146,7 +146,11 @@ export default function Settings() {
           {/* New Work Mode Selection (Demo vs Live) */}
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
             <button 
-              onClick={() => { setWorkMode("demo"); syncToBackend({ workMode: "demo" }); }}
+              onClick={() => { 
+                setWorkMode("demo"); 
+                localStorage.setItem("aegisMode", "demo");
+                syncToBackend({ work_mode: "demo" }); 
+              }}
               style={{
                 flex: 1,
                 padding: '1rem',
@@ -162,7 +166,11 @@ export default function Settings() {
               DEMO SANDBOX
             </button>
             <button 
-              onClick={() => { setWorkMode("live"); syncToBackend({ workMode: "live" }); }}
+              onClick={() => { 
+                setWorkMode("live"); 
+                localStorage.setItem("aegisMode", "live");
+                syncToBackend({ work_mode: "live" }); 
+              }}
               style={{
                 flex: 1,
                 padding: '1rem',
