@@ -73,5 +73,5 @@ if __name__ == "__main__":
     print("Forwarding intercepts to: " + AEGISTRAP_CORE_URL)
     print("==================================================")
     
-    # Run the Flask app on all interfaces on port 5000
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    # Run the Flask app on all interfaces on port 5005
+    app.run(host="0.0.0.0", port=5005, debug=False)

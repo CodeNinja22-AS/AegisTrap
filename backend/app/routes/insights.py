@@ -36,9 +36,8 @@ def get_insights(mode: str = "demo"):
     if db is not None:
         try:
             col = "logs_live" if mode == "live" else "logs_demo"
-            # Get logs from last 24 hours
-            since = now - timedelta(hours=24)
-            docs = db.collection(col).where("timestamp", ">=", since.isoformat()).stream()
+            # Get logs from last 24 hours for live, or all for demo
+            docs = db.collection(col).stream()
             
             for doc in docs:
                 data = doc.to_dict()
@@ -49,6 +48,10 @@ def get_insights(mode: str = "demo"):
                 
                 try:
                     dt = datetime.fromisoformat(ts_str.replace('Z', ''))
+                    # 24-hour filter ONLY for live mode
+                    if mode == "live" and dt < (now - timedelta(hours=24)):
+                        continue
+
                     hour_key = dt.strftime("%H:00")
                     if hour_key in time_series_data:
                         if attack_type in time_series_data[hour_key]:
@@ -59,7 +62,7 @@ def get_insights(mode: str = "demo"):
                 if attack_type != "normal":
                     payload_counter[(payload, attack_type)] += 1
                     
-                # Classification Accuracy Simulation using AI confidence
+                # Classification Accuracy
                 if confidence > 0.9: classification_counts["Confident (ML >90%)"] += 1
                 elif confidence > 0.7: classification_counts["Probable (ML 70-90%)"] += 1
                 else: classification_counts["Uncertain (ML <70%)"] += 1
@@ -77,9 +80,10 @@ def get_insights(mode: str = "demo"):
                     ts_str, payload, attack_type, full_json_str = row
                     
                     try:
-                        # Only process data from last 24 hours
                         dt = datetime.fromisoformat(ts_str.replace('Z', ''))
-                        if dt < (now - timedelta(hours=24)): continue
+                        # 24-hour filter ONLY for live mode
+                        if mode == "live" and dt < (now - timedelta(hours=24)):
+                            continue
                         
                         hour_key = dt.strftime("%H:00")
                         if hour_key in time_series_data:
@@ -89,20 +93,30 @@ def get_insights(mode: str = "demo"):
                         if attack_type != "normal":
                             payload_counter[(payload, attack_type)] += 1
                         
-                        # Extract confidence from JSON if available
-                        full_data = json.loads(full_json_str)
-                        conf = full_data.get("risk_assessment", {}).get("confidence", 0.5)
+                        # Extract confidence
+                        try:
+                            full_data = json.loads(full_json_str)
+                            conf = full_data.get("risk_assessment", {}).get("confidence", 0.5)
+                        except:
+                            conf = 0.5
+
                         if conf > 0.9: classification_counts["Confident (ML >90%)"] += 1
                         elif conf > 0.7: classification_counts["Probable (ML 70-90%)"] += 1
                         else: classification_counts["Uncertain (ML <70%)"] += 1
                         
-                    except:
+                    except Exception as inner_e:
                         pass
         except Exception as e:
             print(f"[INSIGHTS] CSV error: {e}")
 
     # 🔹 Format for Recharts AreaChart
-    sorted_times = sorted(time_series_data.keys(), key=lambda x: (x < now.strftime("%H:00"), x))
+    # Sort the last 24 slots chronologically
+    current_hour_int = now.hour
+    sorted_times = []
+    for i in range(24):
+        h = (current_hour_int - 23 + i) % 24
+        sorted_times.append(f"{h:02d}:00")
+
     time_series = []
     for k in sorted_times:
         entry = {"time": k}
@@ -128,7 +142,7 @@ def get_insights(mode: str = "demo"):
             accuracy_data.append({"name": name, "value": classification_counts[name]})
 
     return {
-        "mode": "live" if mode == "live" else "demo",
+        "mode": mode,
         "time_series": time_series,
         "top_payloads": top_payloads,
         "classification_accuracy": accuracy_data

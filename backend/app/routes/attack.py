@@ -2,6 +2,7 @@ import re
 import os
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
+from typing import Optional
 from datetime import datetime
 
 from app.services.ml_service import predict_attack
@@ -30,6 +31,8 @@ router = APIRouter()
 class AttackRequest(BaseModel):
     input: str
     source: str
+    category: Optional[str] = "unknown"
+    metadata: Optional[dict] = {}
 
 async def run_automation(log_data, settings):
     """
