@@ -146,16 +146,18 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks, 
         attack_type = "file_upload_attack"
 
     # 🔹 Step 6: Decision Engine (IDS vs IPS)
-    behavior = get_mode_behavior(mode)
+    # 🔹 Step 6: Security Layer Behavioral Logic (IDS vs IPS)
+    # Simulation mode (demo) always acts as IDS for demonstration purposes.
+    # IPS (Blocking) only triggers in LIVE PRODUCTION.
+    active_behavior = get_mode_behavior(mode if mode == "live" else "IDS")
     
-    print(f"[DEBUG] Processing Attack Type: {attack_type}")
-
-    
-    if behavior["block"] and attack_type != "normal":
-        # 🔥 IPS MODE: Return static block response
+    if mode == "live" and settings.get("mode") == "IPS" and attack_type != "normal":
+        print(f"[SECURITY] IPS BLOCK TRIGGERED: Blocking {attack_type} attack.")
         ai_output = generate_block_response(data.input, attack_type)
+        session["history"].append(f"[BLOCKED] {attack_type}")
     else:
-        # 🔥 IDS MODE: Dynamic AI Deception
+        # 🔹 Step 7: Agentic AI Response (Deception Phase)
+        print(f"[DECEPTION] Phase Active: Generating hallucinated response.")
         ai_output = generate_ai_response(
             input_text=enhanced_payload, 
             attack_type=attack_type,
