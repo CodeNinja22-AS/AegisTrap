@@ -6,7 +6,7 @@
     "mode": "IDS",
     "ai_threshold": "balanced",
     "siem_enabled": false,
-    "work_mode": "live",
+    "work_mode": "demo",
     "analyst_name": "Test",
     "shift_time": "Day"
 }
