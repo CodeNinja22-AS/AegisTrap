@@ -162,7 +162,8 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks, 
             input_text=enhanced_payload, 
             attack_type=attack_type,
             session=session,
-            directive=behavior["directive"]
+            directive=active_behavior["directive"],
+            mode=mode # Pass mode to selector
         )
 
     # 🔹 Step 7: Log data preparation

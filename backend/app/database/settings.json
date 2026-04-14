@@ -1,10 +1,16 @@
 {
-    "analyst_email": "abhrantdrive3@gmail.com",
-    "priority_attacks": ["sqli", "command_injection", "xss", "jwt_attack", "path_traversal"],
+    "analyst_email": "abhrantsingh2226@gmail.com",
+    "priority_attacks": [
+        "sqli",
+        "xss",
+        "command_injection",
+        "jwt_attack",
+        "path_traversal"
+    ],
     "automation_enabled": true,
     "report_tier": "Tier 1",
-    "mode": "IDS",
-    "ai_threshold": "balanced",
+    "mode": "IPS",
+    "ai_threshold": "paranoid",
     "siem_enabled": false,
     "work_mode": "demo",
     "analyst_name": "Test",
