@@ -11,8 +11,8 @@
 [ AGENTIC HONEYPOT AS A SERVICE | LLM-DRIVEN DECEPTION | SOC INTEL ]
 ```
 
-[![AegisTrap Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge&logo=shield-halved)](file:///c:/Users/Abhrant Singh/Desktop/Projects/Hackathon Projects/AegisTrap/AegisTrap/README.md)
-[![AI Engine](https://img.shields.io/badge/AI-Mistral--7B-blueviolet?style=for-the-badge&logo=ai)](file:///c:/Users/Abhrant Singh/Desktop/Projects/Hackathon Projects/AegisTrap/AegisTrap/README.md)
+![AegisTrap Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge&logo=shield-halved)
+![AI Engine](https://img.shields.io/badge/AI-Mistral--7B-blueviolet?style=for-the-badge&logo=ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 ---
