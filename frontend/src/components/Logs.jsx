@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { getLogs } from "../services/api";
+import { GlassContainer } from "./ui/GlassContainer";
+import { Search, Filter, ShieldAlert, Cpu, Terminal, Clock, ChevronRight, Activity } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Logs() {
   const [logs, setLogs] = useState([]);
@@ -20,210 +23,139 @@ export default function Logs() {
 
   useEffect(() => {
     fetchLogs();
-    const interval = setInterval(fetchLogs, 3000);
+    const interval = setInterval(fetchLogs, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const getRiskColor = (prediction) => {
-    switch (prediction) {
-      case "sqli": return "var(--danger)";
-      case "xss": return "var(--warning)";
-      case "bruteforce": return "var(--accent-cyber)";
-      case "suspicious": return "var(--warning)";
-      case "command_injection": return "var(--danger)";
-      case "path_traversal": return "var(--warning)";
-      case "file_upload_attack": return "var(--warning)";
-      case "ddos_pattern": return "var(--danger)";
-      case "csrf": return "var(--warning)";
-      case "jwt_attack": return "var(--warning)";
-      case "api_abuse": return "var(--warning)";
-      case "normal": return "var(--text-dim)";
-      default: return "var(--primary)";
-    }
-  };
-
-  const getRiskBadge = (prediction) => {
-    switch (prediction) {
-      case "sqli": return "CRITICAL";
-      case "xss": return "HIGH";
-      case "bruteforce": return "HIGH";
-      case "suspicious": return "MEDIUM";
-      case "command_injection": return "CRITICAL";
-      case "path_traversal": return "HIGH";
-      case "file_upload_attack": return "HIGH";
-      case "ddos_pattern": return "CRITICAL";
-      case "csrf": return "MEDIUM";
-      case "jwt_attack": return "HIGH";
-      case "api_abuse": return "MEDIUM";
-      case "normal": return "NONE";
-      default: return "UNKNOWN";
-    }
+  const getSeverity = (type) => {
+    if (['sqli', 'command_injection', 'ddos_pattern', 'ssrf_aws', 'k8s_attack'].includes(type)) return { label: 'CRITICAL', color: 'text-[var(--danger)]', border: 'border-l-[var(--danger)]' };
+    if (['xss', 'path_traversal', 'file_upload_attack', 'jwt_attack'].includes(type)) return { label: 'HIGH', color: 'text-[var(--warning)]', border: 'border-l-[var(--warning)]' };
+    if (['suspicious', 'api_abuse', 'csrf'].includes(type)) return { label: 'MEDIUM', color: 'text-[var(--primary)]', border: 'border-l-[var(--primary)]' };
+    return { label: 'INFO', color: 'text-[var(--text-dim)]', border: 'border-l-[var(--border-color)]' };
   };
 
   const filteredLogs = [...logs].reverse().filter(log => {
-    const [timestamp, payload, prediction, response] = log;
-    
-    // Check type filter
-    const matchesFilter = filterType === "All" || 
-      (filterType === "SQLi" && prediction === "sqli") ||
-      (filterType === "XSS" && prediction === "xss") ||
-      (filterType === "Brute Force" && prediction === "bruteforce") ||
-      (filterType === "Command Injection" && prediction === "command_injection") ||
-      (filterType === "Path Traversal" && prediction === "path_traversal") ||
-      (filterType === "File Upload" && prediction === "file_upload_attack") ||
-      (filterType === "DDoS" && prediction === "ddos_pattern") ||
-      (filterType === "CSRF" && prediction === "csrf") ||
-      (filterType === "JWT" && prediction === "jwt_attack") ||
-      (filterType === "API Abuse" && prediction === "api_abuse") ||
-      (filterType === "Suspicious" && prediction === "suspicious");
-
-    // Check search term
+    const [_, payload, prediction, response] = log;
+    const matchesFilter = filterType === "All" || prediction === filterType.toLowerCase().replace(' ', '_');
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch = !searchTerm || 
       String(payload).toLowerCase().includes(searchLower) ||
-      String(prediction).toLowerCase().includes(searchLower) ||
-      String(response).toLowerCase().includes(searchLower);
-
+      String(prediction).toLowerCase().includes(searchLower);
     return matchesFilter && matchesSearch;
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
-      
-      {/* Top Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+    <div className="max-w-5xl mx-auto space-y-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-[var(--border-color)]">
         <div>
-          <h1 style={{ marginBottom: '0.25rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            Threat Event Log
+          <h1 className="text-3xl font-display font-bold text-[var(--text-main)] tracking-widest uppercase mb-1">
+            Threat Intelligence Log
           </h1>
-          <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '0.9rem' }}>
-            Historical network intelligence and firewall interceptions.
+          <p className="text-[var(--text-dim)] text-xs font-mono uppercase tracking-widest">
+            Historical archival of intercepted neural activity.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-          <input 
-            type="text" 
-            placeholder="Search payloads..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              background: 'rgba(0,0,0,0.3)',
-              border: '1px solid var(--border-color)',
-              padding: '0.5rem 1rem',
-              borderRadius: '6px',
-              color: 'var(--text-main)',
-              width: '250px',
-              outline: 'none',
-              fontFamily: 'monospace'
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--text-dim)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-          />
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-dim)]" />
+            <input 
+              type="text" 
+              placeholder="Search signatures..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 bg-[var(--surface-high)] border border-[var(--border-color)] rounded-lg text-sm text-[var(--text-main)] font-mono outline-none focus:border-[var(--accent-cyber)]/40 transition-all w-64"
+            />
+          </div>
           
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="cyber-select"
-            style={{
-              border: '1px solid var(--border-color)',
-              padding: '0.5rem 1rem',
-              borderRadius: '6px',
-              color: 'var(--text-main)',
-              outline: 'none',
-              cursor: 'pointer',
-              fontFamily: 'inherit'
-            }}
-            onFocus={(e) => e.target.style.borderColor = 'var(--text-dim)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
-          >
-            <option value="All">All Threats</option>
-            <option value="SQLi">SQL Injection</option>
-            <option value="XSS">Cross Site Scripting</option>
-            <option value="Brute Force">Brute Force</option>
-            <option value="Command Injection">Sys Command Injection</option>
-            <option value="Path Traversal">Dir Path Traversal</option>
-            <option value="File Upload">File Upload</option>
-            <option value="DDoS">DDoS Pattern</option>
-            <option value="CSRF">CSRF Attack</option>
-            <option value="JWT">JWT Tampering</option>
-            <option value="API Abuse">API Abuse</option>
-            <option value="Suspicious">Suspicious</option>
-          </select>
+          <div className="relative">
+            <Filter className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-dim)]" />
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="pl-10 pr-8 py-2 bg-[var(--surface-high)] border border-[var(--border-color)] rounded-lg text-sm text-[var(--text-main)] appearance-none outline-none focus:border-[var(--accent-cyber)]/40 transition-all cursor-pointer"
+            >
+              <option value="All">All Entities</option>
+              <option value="SQLi">SQL Injection</option>
+              <option value="XSS">XSS Signatures</option>
+              <option value="Command Injection">CMD Injects</option>
+              <option value="Path Traversal">Directory Traversal</option>
+              <option value="DDoS">DDoS Patterns</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Log Feed */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {loading && logs.length === 0 ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-dim)' }}>
-            <span className="loader" style={{ width: '1.5rem', height: '1.5rem', verticalAlign: 'middle', marginRight: '0.5rem', borderWidth: '2px', borderTopColor: 'var(--text-main)' }}></span>
-            Synchronizing database...
-          </div>
-        ) : filteredLogs.length > 0 ? (
-          filteredLogs.map((log, index) => {
-            const [timestamp, payload, prediction, response] = log;
-            const timeStr = new Date(timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+      <div className="space-y-4">
+        <AnimatePresence mode="popLayout">
+          {loading && logs.length === 0 ? (
+            <div className="py-20 text-center">
+              <Activity className="w-10 h-10 text-[var(--accent-cyber)] animate-pulse mx-auto mb-4" />
+              <p className="text-[var(--text-dim)] font-mono text-sm tracking-widest uppercase">Initializing Log Stream...</p>
+            </div>
+          ) : filteredLogs.length === 0 ? (
+            <div className="py-20 text-center border-2 border-dashed border-[var(--border-color)] rounded-xl">
+              <p className="text-[var(--text-dim)] font-mono text-sm tracking-widest uppercase">No interception matches current scan profile.</p>
+            </div>
+          ) : (
+            filteredLogs.map((log, index) => {
+              const [timestamp, payload, prediction, response] = log;
+              const severity = getSeverity(prediction);
+              
+              return (
+                <motion.div
+                  key={timestamp + index}
+                  layout
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: (index % 5) * 0.05 }}
+                >
+                  <GlassContainer className={`overflow-hidden border-l-4 ${severity.border}`}>
+                    <div className="flex flex-col">
+                      {/* Header */}
+                      <div className="px-6 py-3 bg-[var(--surface-high)]/30 border-b border-[var(--border-color)] flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <span className={`text-[10px] font-bold tracking-widest py-1 px-2 rounded bg-black/40 ${severity.color}`}>
+                            {severity.label}
+                          </span>
+                          <span className="text-sm font-display font-medium text-[var(--text-main)] uppercase tracking-wider">
+                            {prediction.replace('_', ' ')}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4 text-[var(--text-dim)] text-[10px] font-mono">
+                          <Clock className="w-3 h-3" />
+                          {new Date(timestamp).toLocaleString()}
+                        </div>
+                      </div>
 
-            const riskColor = getRiskColor(prediction);
-            const riskBadge = getRiskBadge(prediction);
-            
-            return (
-              <div 
-                key={index} 
-                className="cyber-card transition-enter" 
-                style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '1rem',
-                  borderLeft: `4px solid ${riskColor}`,
-                  padding: '1.5rem',
-                  animation: 'fadeIn 0.3s ease'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ 
-                      background: `${riskColor}10`, 
-                      color: riskColor, 
-                      padding: '0.25rem 0.5rem', 
-                      borderRadius: '4px', 
-                      fontWeight: 'bold', 
-                      fontSize: '0.75rem',
-                      border: `1px solid ${riskColor}40`,
-                      letterSpacing: '0.05em'
-                    }}>
-                      {riskBadge}
-                    </div>
-                    <div style={{ fontWeight: '600', fontSize: '1.1rem', color: 'var(--text-main)' }}>
-                      {prediction || "Undetermined"}
-                    </div>
-                    <div style={{ color: 'var(--text-dim)', fontSize: '0.85rem', fontFamily: 'monospace' }}>
-                      {timeStr}
-                    </div>
-                  </div>
-                </div>
+                      {/* Content */}
+                      <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div className="md:col-span-5 space-y-2">
+                          <label className="text-[10px] font-bold text-[var(--text-dim)] uppercase tracking-widest block">Ingested Payload</label>
+                          <div className="bg-black/40 p-3 rounded border border-[var(--border-color)] font-mono text-xs text-[var(--primary)] break-all min-h-[50px] flex items-center">
+                            {payload}
+                          </div>
+                        </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) 2fr', gap: '1.5rem', background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: 'bold', letterSpacing: '0.05em' }}>PAYLOAD RECEIVED:</span>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--primary)', wordBreak: 'break-all', fontSize: '0.9rem' }}>{payload}</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', borderLeft: '1px solid var(--border-color)', paddingLeft: '1.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontWeight: 'bold', letterSpacing: '0.05em' }}>SYSTEM RESOLUTION:</span>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--text-main)', fontSize: '0.9rem', whiteSpace: 'pre-wrap' }}>{typeof response === 'object' ? JSON.stringify(response, null, 2) : response}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div className="cyber-card" style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-dim)', borderRadius: '8px' }}>
-            No intel matches current filtering criteria.
-          </div>
-        )}
+                        <div className="md:col-span-1 flex items-center justify-center opacity-20">
+                          <ChevronRight className="w-6 h-6" />
+                        </div>
+
+                        <div className="md:col-span-6 space-y-2">
+                          <label className="text-[10px] font-bold text-[var(--text-dim)] uppercase tracking-widest block">Simulation Resolution</label>
+                          <div className="bg-black/20 p-3 rounded border border-[var(--border-color)] font-mono text-[10px] text-[var(--text-main)] leading-relaxed h-[80px] overflow-y-auto">
+                            {typeof response === 'string' ? response : JSON.stringify(response)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </GlassContainer>
+                </motion.div>
+              );
+            })
+          )}
+        </AnimatePresence>
       </div>
-
     </div>
   );
 }

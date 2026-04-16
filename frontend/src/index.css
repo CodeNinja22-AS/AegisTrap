@@ -1,30 +1,48 @@
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
+@theme {
+  --color-void-900: #050505;
+  --color-void-800: #0a0b10;
+  --color-void-700: #121318;
+  --color-void-600: #1a1b21;
+  --color-void-500: #1e1f25;
+  --color-void-400: #292a2f;
+
+  --color-neon-cyan: #00f2ff;
+  --color-neon-magenta: #fe00fe;
+  --color-neon-green: #39FF14;
+  --color-neon-indigo: #304FFE;
+
+  --color-accent-primary: var(--color-neon-cyan);
+  --color-accent-secondary: var(--color-neon-magenta);
+  --color-danger: #ffb4ab;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+}
+
 :root {
-  /* THE DEEP VOID PALETTE */
-  --bg-dark: #0e0e0e;
-  --surface-low: #131313;
-  --surface-high: #201f1f;
-  --surface-highest: #262626;
-  --card-dark: var(--surface-low); /* Alias for legacy components */
+  /* Legacy mapping for parts that still use it */
+  --bg-dark: var(--color-void-900);
+  --surface-low: var(--color-void-800);
+  --surface-high: var(--color-void-700);
+  --surface-highest: var(--color-void-600);
+  --card-dark: var(--color-void-800);
 
-  /* TYPOGRAPHY COLORS */
-  --text-main: #ffffff;
-  --text-dim: #adaaaa;
+  --text-main: #e3e1e9;
+  --text-dim: #aab7bf;
 
-  /* HYPER-SIGNAL ACCENTS */
-  --accent-cyber: #8eff71;
-  --primary: #8eff71;
-  --primary-container: #2ff801;
-  --primary-hover: #2be800;
-  
-  --danger: #ff7351;
+  --accent-cyber: var(--color-neon-cyan);
+  --primary: var(--color-neon-cyan);
+  --primary-container: var(--color-neon-indigo);
+  --primary-hover: #7b9cff;
+  --danger: var(--color-danger);
   --warning: #ffb400;
-  --secondary: #90f9a3;
+  --secondary: var(--color-neon-magenta);
 
-  /* THE GHOST BORDER (Outline Variant at 15%) */
-  --border-color: rgba(73, 72, 71, 0.15);
-  --outline-variant: #494847;
+  --border-color: rgba(69, 70, 82, 0.2);
+  --outline-variant: #454652;
 }
 
 * {

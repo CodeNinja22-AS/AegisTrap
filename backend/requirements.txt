@@ -50,5 +50,6 @@ typing_extensions
 tzdata
 urllib3
 uvicorn
+websockets
 
 firebase-admin

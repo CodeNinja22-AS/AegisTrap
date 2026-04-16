@@ -144,6 +144,14 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks, 
     # 8. Malicious File Upload (Webshell extensions)
     elif re.search(r"\.(php|jsp|asp|exe|sh|py|pl|cgi|asp|phtml)$", input_lower):
         attack_type = "file_upload_attack"
+        
+    # 9. SSRF / AWS IMDS Attack
+    elif re.search(r"(169\.254\.169\.254|metadata|latest/meta-data)", input_lower):
+        attack_type = "ssrf_aws"
+        
+    # 10. Kubernetes Secrets Dump
+    elif re.search(r"(/var/run/secrets/kubernetes\.io|kubelet|kubectl get secrets|/api/v1/namespaces)", input_lower):
+        attack_type = "k8s_attack"
 
     # 🔹 Step 6: Decision Engine (IDS vs IPS)
     # 🔹 Step 6: Security Layer Behavioral Logic (IDS vs IPS)
@@ -197,6 +205,11 @@ async def handle_attack(data: AttackRequest, background_tasks: BackgroundTasks, 
 
     if settings.get("automation_enabled") and attack_type in settings.get("priority_attacks", []):
         background_tasks.add_task(run_automation, log_entry, settings)
+
+    # 🔹 Stage 11: Real-Time WebSocket Broadcaster
+    from app.services.websocket_manager import manager
+    if manager.active_connections:
+        background_tasks.add_task(manager.broadcast, log_entry)
 
     return {
         "attack_type": attack_type,

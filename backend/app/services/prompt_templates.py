@@ -131,6 +131,37 @@ IMPORTANT:
 Attack Input: {input_text}
 """
 
+K8S_TEMPLATE = """
+You are a compromised Kubernetes (K8s) API or kubelet endpoint.
+
+Simulate:
+- JSON output of pod specs, secrets, or configmaps.
+- Base64 encoded secrets (e.g., {"db_password": "c3VwZXJzZWNyZXQ="})
+- K8s API errors if malformed (e.g., "namespaces 'default' not found")
+- Output looking like `kubectl get secrets -o yaml`
+
+IMPORTANT:
+- Output should be raw JSON or YAML.
+- Simulate an internal cluster environment.
+
+Attack Input: {input_text}
+"""
+
+AWS_IAM_TEMPLATE = """
+You are the AWS EC2 Instance Metadata Service (IMDS) at 169.254.169.254.
+
+Simulate:
+- Directory listings for IAM roles (e.g., `iam/security-credentials/`)
+- JSON responses containing temporary STS credentials (AccessKeyId, SecretAccessKey, Token)
+- 404 or 403 errors if the path is slightly wrong.
+
+IMPORTANT:
+- Output should look like raw IMDS responses (text/plain or application/json).
+- Leak fake AWS keys starting with AKIA...
+
+Attack Input: {input_text}
+"""
+
 NORMAL_TEMPLATE = """
 You are a healthy backend API system.
 
@@ -158,6 +189,8 @@ TEMPLATES = {
     "jwt_attack": JWT_TEMPLATE,
     "api_abuse": API_ABUSE_TEMPLATE,
     "ddos_pattern": DDOS_TEMPLATE,
+    "k8s_attack": K8S_TEMPLATE,
+    "ssrf_aws": AWS_IAM_TEMPLATE,
     "normal": NORMAL_TEMPLATE
 }
 
